@@ -1,848 +1,571 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Renovaciones VivoLife | MiBlue Medical</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <style>
-    body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renovaciones VivoLife | MiBlue Medical</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;font-size:14px;}
 
-    .app-header {
-      background: linear-gradient(135deg, #1a3c5e 0%, #2d7dd2 100%);
-      color: white; padding: 1rem 2rem;
-    }
-    .kpi-card {
-      border-radius: 12px; padding: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      transition: transform .2s; background: white;
-    }
-    .kpi-card:hover { transform: translateY(-3px); }
+/* Header */
+.hdr{background:#1a3c5e;color:#fff;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.hdr h1{font-size:1.05rem;font-weight:700;margin:0;}
+.clock{font-size:.8rem;background:rgba(255,255,255,.13);border-radius:20px;padding:5px 14px;}
 
-    .section-card {
-      background: white; border-radius: 12px;
-      padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
-    .commission-box {
-      background: linear-gradient(135deg, #7b2d8b, #9b59b6);
-      color: white; border-radius: 12px; padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    }
+/* KPI bar */
+.kpi-bar{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:3px solid #e2e8f0;}
+.kpi-box{padding:16px 20px;border-right:1px solid #e2e8f0;text-align:center;}
+.kpi-box:last-child{border-right:none;}
+.kpi-num{font-size:2rem;font-weight:900;line-height:1;}
+.kpi-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#64748b;margin-top:4px;}
+.kpi-sub{font-size:.7rem;color:#94a3b8;margin-top:2px;}
+.pct-bar{height:5px;background:#e2e8f0;border-radius:3px;margin-top:8px;overflow:hidden;}
+.pct-fill{height:100%;border-radius:3px;transition:width .4s;}
 
-    /* Alert banner */
-    #alertBanner {
-      border-left: 5px solid #e74c3c;
-      background: #fff5f5; padding: .75rem 2rem;
-    }
+/* Tabs */
+.tab-row{display:flex;border-bottom:2px solid #e2e8f0;background:#fff;padding:0 20px;}
+.tab-btn{padding:11px 20px;border:none;background:none;font-weight:700;font-size:.84rem;color:#64748b;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:.12s;}
+.tab-btn.active.crm{color:#dc2626;border-bottom-color:#dc2626;}
+.tab-btn.active.tok{color:#15803d;border-bottom-color:#15803d;}
+.cnt-badge{display:inline-block;border-radius:20px;padding:1px 8px;font-size:.65rem;font-weight:700;margin-left:6px;}
 
-    /* Table rows color */
-    tr.row-vencida { background: #ffeef0 !important; }
-    tr.row-urgente { background: #fff3e0 !important; }
-    tr.row-proxima { background: #fffde7 !important; }
-    tr.row-renovada { background: #f0fff4 !important; opacity: .85; }
+/* Content */
+.content{padding:18px 22px;max-width:1440px;margin:0 auto;}
 
-    @keyframes pulse-red {
-      0%,100% { background-color: #ffeef0; }
-      50%      { background-color: #ffd0d5; }
-    }
-    tr.row-vencida { animation: pulse-red 2.5s ease-in-out infinite; }
+/* Info banner */
+.banner{border-radius:9px;padding:11px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;font-size:.83rem;}
+.banner.red{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;}
+.banner.green{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;}
 
-    .table-container {
-      background: white; border-radius: 12px;
-      overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
+/* Stats chips */
+.stats-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.chip{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:4px 12px;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:5px;}
+.chip.pend{color:#475569;} .chip.llam{color:#1d4ed8;} .chip.seg{color:#92400e;}
+.chip.renov{color:#15803d;} .chip.norec{color:#dc2626;}
 
-    /* Priority badge colors */
-    .pri-vencida  { background: #e74c3c; color: white; }
-    .pri-urgente  { background: #e67e22; color: white; }
-    .pri-proxima  { background: #f39c12; color: white; }
-    .pri-media    { background: #3498db; color: white; }
-    .pri-baja     { background: #27ae60; color: white; }
-    .pri-renovada { background: #8e44ad; color: white; }
+/* Filtros */
+.fbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:9px 13px;margin-bottom:12px;}
+.fbar input,.fbar select{border:1px solid #e2e8f0;border-radius:6px;padding:5px 9px;font-size:.8rem;background:#f8fafc;color:#1e293b;}
+.fbar input:focus,.fbar select:focus{outline:none;border-color:#1a3c5e;}
 
-    .progress { border-radius: 8px; }
-    .progress-bar { font-size: 11px; font-weight: 600; }
+/* Tabla CRM */
+.twrap{background:#fff;border-radius:9px;border:1px solid #e2e8f0;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+thead th{background:#1a3c5e;color:#fff;padding:9px 10px;text-align:left;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+thead.green-head th{background:#15803d;}
+tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+tbody tr:hover td{background:#fafafa;}
+tbody tr.mora-row td{background:#fff5f5;}
+tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 
-    /* Responsive table font */
-    #tableBody td { font-size: .875rem; vertical-align: middle; }
+/* Estado dropdown */
+.est-dd{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;font-weight:600;background:#f8fafc;cursor:pointer;min-width:148px;}
+.est-dd.pendiente{background:#f1f5f9;color:#475569;}
+.est-dd.primer_intento{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}
+.est-dd.segundo_intento{background:#fef3c7;color:#92400e;border-color:#fde68a;}
+.est-dd.renovado{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
+.est-dd.no_renueva{background:#fef2f2;color:#dc2626;border-color:#fecaca;}
 
-    .filter-bar {
-      background: #f8fafc; border-bottom: 1px solid #e2e8f0;
-      padding: .75rem 1rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
-    }
+/* Fecha / notas inputs */
+.finp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;background:#f8fafc;width:128px;}
+.finp:focus{outline:none;border-color:#1a3c5e;}
+.ninp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;background:#f8fafc;width:155px;}
+.ninp:focus{outline:none;border-color:#1a3c5e;}
 
-    .btn-xs { padding: .2rem .45rem; font-size: .75rem; }
-  </style>
+/* Tags */
+.tag{display:inline-block;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;}
+.t-mora{background:#fecaca;color:#991b1b;}
+.t-ok{background:#dbeafe;color:#1e40af;}
+
+/* Paginación */
+.pagbar{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:#f8fafc;border-top:1px solid #e2e8f0;font-size:.78rem;color:#64748b;}
+.pbtn{border:1px solid #e2e8f0;background:#fff;border-radius:6px;padding:4px 12px;font-size:.78rem;cursor:pointer;color:#1a3c5e;font-weight:600;}
+.pbtn:hover{background:#f1f5f9;} .pbtn:disabled{opacity:.35;cursor:default;}
+
+/* Export btn */
+.ebtn{background:#1a3c5e;color:#fff;border:none;border-radius:7px;padding:7px 15px;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.ebtn:hover{background:#15304e;}
+.ebtn.green{background:#15803d;} .ebtn.green:hover{background:#166534;}
+
+@media(max-width:768px){.kpi-bar{grid-template-columns:repeat(2,1fr);}}
+</style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     HEADER
-══════════════════════════════════════════ -->
-<header class="app-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+<!-- HEADER -->
+<header class="hdr">
   <div>
-    <h1 class="h5 mb-0"><i class="fas fa-heartbeat me-2"></i>Renovaciones VivoLife</h1>
-    <small class="opacity-75">MiBlue Medical — Panel de Control</small>
+    <h1><i class="fas fa-rotate me-2"></i>Renovaciones VivoLife — MiBlue Medical</h1>
+    <small style="opacity:.7;font-size:.75rem">Panel de gestión · Call Center</small>
   </div>
-  <div class="d-flex gap-2 align-items-center flex-wrap">
-    <span class="badge bg-white text-dark" id="lastUpdate"></span>
-    <button class="btn btn-sm btn-light" onclick="exportCSV()">
-      <i class="fas fa-download me-1"></i>Exportar CSV
-    </button>
-    <button class="btn btn-sm btn-warning fw-semibold" onclick="openModal()">
-      <i class="fas fa-plus me-1"></i>Nueva Renovación
-    </button>
-    <button class="btn btn-sm btn-outline-light" onclick="showConfigModal()">
-      <i class="fas fa-gear me-1"></i>Metas
-    </button>
+  <div class="clock" id="clock">—</div>
+  <div class="d-flex gap-2 flex-wrap">
+    <button class="ebtn green" onclick="exportarCRM()"><i class="fas fa-download"></i> Exportar CRM</button>
+    <button class="ebtn" onclick="exportarTok()"><i class="fas fa-download"></i> Exportar cobro auto</button>
   </div>
 </header>
 
-<!-- ══════════════════════════════════════════
-     ALERT BANNER
-══════════════════════════════════════════ -->
-<div id="alertBanner" class="d-none">
-  <div id="alertContent"></div>
+<!-- KPIs -->
+<div class="kpi-bar">
+  <div class="kpi-box">
+    <div class="kpi-num" style="color:#1a3c5e" id="k-total">5,211</div>
+    <div class="kpi-lbl">Total suscripciones</div>
+    <div class="kpi-sub">base completa</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-num" style="color:#15803d" id="k-tok">2,973</div>
+    <div class="kpi-lbl">Con tarjeta tokenizada</div>
+    <div class="kpi-sub">cobro automático ✓</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-num" style="color:#1a3c5e" id="k-pct">57.0%</div>
+    <div class="kpi-lbl">% Tokenización</div>
+    <div class="pct-bar"><div class="pct-fill" id="k-bar" style="width:57%;background:#15803d"></div></div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-num" style="color:#dc2626" id="k-sin">2,238</div>
+    <div class="kpi-lbl">Sin tarjeta — hay que llamar</div>
+    <div class="kpi-sub" id="k-sin-sub">gestión call center</div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MAIN
-══════════════════════════════════════════ -->
-<div class="container-fluid py-4 px-3 px-md-4">
+<!-- TABS -->
+<div class="tab-row">
+  <button class="tab-btn active crm" id="tab-crm" onclick="setTab('crm')">
+    <i class="fas fa-phone me-1"></i>Gestión CRM — Hay que llamar
+    <span class="cnt-badge" id="b-crm" style="background:#dc2626;color:#fff">2,238</span>
+  </button>
+  <button class="tab-btn tok" id="tab-tok" onclick="setTab('tok')">
+    <i class="fas fa-credit-card me-1"></i>Cobro automático — Con tarjeta
+    <span class="cnt-badge" id="b-tok" style="background:#15803d;color:#fff">2,973</span>
+  </button>
+</div>
 
-  <!-- KPI Cards -->
-  <div class="row g-3 mb-4" id="kpiSection"></div>
+<div class="content">
 
-  <!-- Progress + Commissions -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="section-card h-100">
-        <h6 class="fw-bold mb-3 text-primary"><i class="fas fa-user-tie me-2"></i>Meta CAS</h6>
-        <div id="casProgress"></div>
+  <!-- ══ TAB CRM ══ -->
+  <div id="panel-crm">
+    <div class="banner red">
+      <i class="fas fa-phone-volume fa-lg mt-1"></i>
+      <div>
+        <strong>Usuarios SIN tarjeta tokenizada</strong> — Requieren llamada para gestionar la renovación o tokenización de tarjeta.<br>
+        <span style="font-size:.8rem">Registra cada intento: <strong>1er intento → 2do intento → Renovado / No renueva</strong>. La fecha queda guardada para seguimiento.</span>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="section-card h-100">
-        <h6 class="fw-bold mb-3 text-success"><i class="fas fa-hospital me-2"></i>Meta Clínica</h6>
-        <div id="clinicaProgress"></div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="commission-box h-100">
-        <h6 class="fw-bold mb-3"><i class="fas fa-coins me-2"></i>Comisiones</h6>
-        <div id="commissionSummary"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Table -->
-  <div class="table-container mb-4">
-    <div class="filter-bar">
-      <input type="text" id="searchInput" class="form-control form-control-sm"
-             style="max-width:200px" placeholder="🔍 Buscar cliente..." oninput="renderTable()">
-      <select id="filterEstado" class="form-select form-select-sm" style="max-width:180px" onchange="renderTable()">
+    <!-- Stats -->
+    <div class="stats-row" id="crmStats"></div>
+
+    <!-- Filtros -->
+    <div class="fbar">
+      <input type="text" id="crmQ" placeholder="🔍 Nombre, teléfono, email..." oninput="renderCRM()" style="min-width:210px">
+      <select id="crmEst" onchange="renderCRM()">
         <option value="">Todos los estados</option>
-        <option value="vencida">🔴 Vencida</option>
-        <option value="urgente">🟠 Urgente (≤7 días)</option>
-        <option value="proxima">🟡 Próxima (≤30 días)</option>
-        <option value="activa">🟢 Activa</option>
-        <option value="renovada">🟣 Renovada</option>
+        <option value="pendiente">🔘 Pendiente</option>
+        <option value="primer_intento">📞 1er intento</option>
+        <option value="segundo_intento">📞📞 2do intento</option>
+        <option value="renovado">✅ Renovado</option>
+        <option value="no_renueva">❌ No renueva</option>
       </select>
-      <select id="filterAsignado" class="form-select form-select-sm" style="max-width:160px" onchange="renderTable()">
-        <option value="">Todos</option>
-        <option value="CAS">CAS</option>
-        <option value="Clínica">Clínica</option>
-        <option value="Ambos">Ambos</option>
+      <select id="crmPlan" onchange="renderCRM()">
+        <option value="">Todos los planes</option>
+        <option value="Vivolife Silver">Vivolife Silver</option>
+        <option value="Vivolife">Vivolife</option>
+        <option value="Vivolife Plus">Vivolife Plus</option>
       </select>
-      <button class="btn btn-sm btn-outline-secondary ms-auto" onclick="resetFilters()">
-        <i class="fas fa-rotate-left me-1"></i>Limpiar
-      </button>
-      <small class="text-muted" id="tableCount"></small>
+      <select id="crmMora" onchange="renderCRM()">
+        <option value="">Activos + Mora</option>
+        <option value="overdue">Solo en mora</option>
+        <option value="active">Solo activos</option>
+      </select>
+      <button class="pbtn ms-auto" onclick="limpiarCRM()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
+      <span id="crmCnt" style="font-size:.75rem;color:#64748b"></span>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover mb-0" id="renewalTable">
-        <thead class="table-dark">
-          <tr>
-            <th>Cliente</th>
-            <th>Plan</th>
-            <th>Vencimiento</th>
-            <th>Días</th>
-            <th>Prioridad</th>
-            <th>Asignado</th>
-            <th>Responsable</th>
-            <th>Estado</th>
-            <th>Comisión</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </div>
 
-  <!-- Charts -->
-  <div class="row g-3">
-    <div class="col-md-4">
-      <div class="section-card">
-        <h6 class="fw-bold mb-3">Estado de Renovaciones</h6>
-        <canvas id="statusChart" height="260"></canvas>
+    <div class="twrap">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox" id="chkAll" onchange="selAll()"></th>
+              <th>#</th>
+              <th>Nombre completo</th>
+              <th>Teléfono</th>
+              <th>Plan</th>
+              <th>Vencimiento</th>
+              <th>Días</th>
+              <th>Estado gestión</th>
+              <th>Fecha 1er intento</th>
+              <th>Fecha 2do intento</th>
+              <th>Notas</th>
+              <th class="text-end">Monto Q</th>
+              <th class="text-end">Comisión Q</th>
+            </tr>
+          </thead>
+          <tbody id="crmBody"></tbody>
+        </table>
       </div>
-    </div>
-    <div class="col-md-8">
-      <div class="section-card">
-        <h6 class="fw-bold mb-3">Vencimientos por Mes — <span id="chartYear"></span></h6>
-        <canvas id="monthlyChart" height="130"></canvas>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ══════════════════════════════════════════
-     MODAL: ADD / EDIT
-══════════════════════════════════════════ -->
-<div class="modal fade" id="renewalModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="modalTitle">Nueva Renovación</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="renewalForm" novalidate>
-          <input type="hidden" id="editId">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Cliente *</label>
-              <input type="text" id="fCliente" class="form-control" required placeholder="Nombre completo">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Plan VivoLife *</label>
-              <select id="fPlan" class="form-select" required>
-                <option value="">Seleccionar plan...</option>
-                <option>VivoLife Básico</option>
-                <option>VivoLife Plus</option>
-                <option>VivoLife Premium</option>
-                <option>VivoLife Familiar</option>
-                <option>VivoLife Empresarial</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Fecha de Inicio *</label>
-              <input type="date" id="fFechaInicio" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Fecha de Vencimiento *</label>
-              <input type="date" id="fFechaVencimiento" class="form-control" required>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Monto Suscripción ($)</label>
-              <input type="number" id="fMonto" class="form-control" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Comisión ($)</label>
-              <input type="number" id="fComision" class="form-control" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Estado</label>
-              <select id="fEstado" class="form-select">
-                <option value="activa">Activa</option>
-                <option value="renovada">Renovada</option>
-                <option value="vencida">Vencida</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Asignado a</label>
-              <select id="fAsignado" class="form-select">
-                <option value="CAS">CAS</option>
-                <option value="Clínica">Clínica</option>
-                <option value="Ambos">Ambos (CAS + Clínica)</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Responsable</label>
-              <input type="text" id="fResponsable" class="form-control" placeholder="Nombre del responsable">
-            </div>
-            <div class="col-12">
-              <label class="form-label fw-semibold">Notas</label>
-              <textarea id="fNotas" class="form-control" rows="2" placeholder="Observaciones..."></textarea>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveRenewal()">
-          <i class="fas fa-save me-1"></i>Guardar
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     MODAL: CONFIG METAS
-══════════════════════════════════════════ -->
-<div class="modal fade" id="configModal" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title">Configurar Metas</h6>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Meta CAS (renovaciones/año)</label>
-          <input type="number" id="cfgMetaCAS" class="form-control" min="1">
-        </div>
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Meta Clínica (renovaciones/año)</label>
-          <input type="number" id="cfgMetaClinica" class="form-control" min="1">
+      <div class="pagbar">
+        <span id="crmPag">—</span>
+        <div class="d-flex gap-2">
+          <button class="pbtn" id="crmPrev" onclick="pgCRM(-1)">◀ Anterior</button>
+          <button class="pbtn" id="crmNext" onclick="pgCRM(1)">Siguiente ▶</button>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-primary btn-sm" onclick="saveConfig()">Guardar</button>
+    </div>
+  </div>
+
+  <!-- ══ TAB COBRO AUTOMÁTICO ══ -->
+  <div id="panel-tok" class="d-none">
+    <div class="banner green">
+      <i class="fas fa-circle-check fa-lg mt-1"></i>
+      <div>
+        <strong>Usuarios CON tarjeta tokenizada — cobro automático</strong>.<br>
+        <span style="font-size:.8rem">Al vencer, el sistema intenta el cobro automáticamente. Pasa este listado a CAS para procesar y confirmar pagos.</span>
+      </div>
+    </div>
+
+    <div class="fbar">
+      <input type="text" id="tokQ" placeholder="🔍 Nombre, teléfono..." oninput="renderTok()" style="min-width:210px">
+      <select id="tokPlan" onchange="renderTok()">
+        <option value="">Todos los planes</option>
+        <option value="Vivolife Silver">Vivolife Silver</option>
+        <option value="Vivolife">Vivolife</option>
+        <option value="Vivolife Plus">Vivolife Plus</option>
+      </select>
+      <select id="tokMora" onchange="renderTok()">
+        <option value="">Activos + Mora</option>
+        <option value="overdue">Solo en mora</option>
+        <option value="active">Solo activos</option>
+      </select>
+      <button class="pbtn ms-auto" onclick="limpiarTok()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
+      <span id="tokCnt" style="font-size:.75rem;color:#64748b"></span>
+    </div>
+
+    <div class="twrap">
+      <div style="overflow-x:auto">
+        <table>
+          <thead class="green-head">
+            <tr>
+              <th>#</th>
+              <th>Nombre completo</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Vencimiento</th>
+              <th>Días</th>
+              <th>Último pago</th>
+              <th class="text-end">Monto Q</th>
+            </tr>
+          </thead>
+          <tbody id="tokBody"></tbody>
+        </table>
+      </div>
+      <div class="pagbar">
+        <span id="tokPag">—</span>
+        <div class="d-flex gap-2">
+          <button class="pbtn" id="tokPrev" onclick="pgTok(-1)">◀ Anterior</button>
+          <button class="pbtn" id="tokNext" onclick="pgTok(1)">Siguiente ▶</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     MODAL: CONFIRM DELETE
-══════════════════════════════════════════ -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h6 class="modal-title">Confirmar eliminación</h6>
-        <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p class="mb-0">¿Eliminar la renovación de <strong id="deleteClientName"></strong>? Esta acción no se puede deshacer.</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button class="btn btn-sm btn-danger" id="confirmDeleteBtn">Eliminar</button>
-      </div>
-    </div>
-  </div>
-</div>
+</div><!-- /content -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="datos.js"></script>
 <script>
-// ═══════════════════════════════════════════════════
-// DATOS DE MUESTRA (VivoLife)
-// ═══════════════════════════════════════════════════
-
-const SAMPLE = [
-  { id:1,  cliente:"Carlos Mendoza",    plan:"VivoLife Plus",        monto:1500, comision:150, fechaInicio:"2025-01-15", fechaVencimiento:"2026-01-15", estado:"vencida",  asignado:"CAS",      responsable:"Ana Flores",             notas:"Cliente preferencial" },
-  { id:2,  cliente:"Laura Jiménez",     plan:"VivoLife Premium",     monto:2400, comision:240, fechaInicio:"2025-02-01", fechaVencimiento:"2026-06-05", estado:"activa",   asignado:"CAS",      responsable:"Pedro Soto",             notas:"" },
-  { id:3,  cliente:"Roberto Silva",     plan:"VivoLife Básico",      monto:800,  comision:80,  fechaInicio:"2025-03-10", fechaVencimiento:"2026-06-10", estado:"activa",   asignado:"Clínica",  responsable:"Dr. Martínez",           notas:"" },
-  { id:4,  cliente:"María Torres",      plan:"VivoLife Familiar",    monto:3200, comision:320, fechaInicio:"2025-04-20", fechaVencimiento:"2026-06-20", estado:"activa",   asignado:"Ambos",    responsable:"Ana Flores / Dr. López", notas:"4 miembros" },
-  { id:5,  cliente:"José Ramírez",      plan:"VivoLife Plus",        monto:1500, comision:150, fechaInicio:"2025-05-01", fechaVencimiento:"2026-06-30", estado:"activa",   asignado:"Clínica",  responsable:"Enf. García",            notas:"" },
-  { id:6,  cliente:"Patricia Vega",     plan:"VivoLife Premium",     monto:2400, comision:240, fechaInicio:"2025-06-15", fechaVencimiento:"2026-07-15", estado:"activa",   asignado:"CAS",      responsable:"Pedro Soto",             notas:"" },
-  { id:7,  cliente:"Andrés Morales",    plan:"VivoLife Básico",      monto:800,  comision:80,  fechaInicio:"2025-07-01", fechaVencimiento:"2026-08-01", estado:"activa",   asignado:"Clínica",  responsable:"Dr. Martínez",           notas:"" },
-  { id:8,  cliente:"Sofía Herrera",     plan:"VivoLife Empresarial", monto:5000, comision:500, fechaInicio:"2025-08-10", fechaVencimiento:"2026-08-10", estado:"activa",   asignado:"CAS",      responsable:"Ana Flores",             notas:"Cuenta empresarial" },
-  { id:9,  cliente:"Diego Castro",      plan:"VivoLife Plus",        monto:1500, comision:150, fechaInicio:"2025-09-05", fechaVencimiento:"2026-09-05", estado:"renovada", asignado:"Clínica",  responsable:"Enf. García",            notas:"Renovada anticipadamente" },
-  { id:10, cliente:"Valeria Ríos",      plan:"VivoLife Premium",     monto:2400, comision:240, fechaInicio:"2025-10-20", fechaVencimiento:"2026-10-20", estado:"renovada", asignado:"CAS",      responsable:"Pedro Soto",             notas:"" },
-  { id:11, cliente:"Miguel Fuentes",    plan:"VivoLife Básico",      monto:800,  comision:80,  fechaInicio:"2025-11-01", fechaVencimiento:"2026-06-03", estado:"activa",   asignado:"Ambos",    responsable:"Ana Flores / Dr. López", notas:"Vence hoy" },
-  { id:12, cliente:"Isabela Paredes",   plan:"VivoLife Familiar",    monto:3200, comision:320, fechaInicio:"2025-12-15", fechaVencimiento:"2026-05-20", estado:"vencida",  asignado:"CAS",      responsable:"Ana Flores",             notas:"Sin contacto aún" },
-  { id:13, cliente:"Fernando Castillo", plan:"VivoLife Plus",        monto:1500, comision:150, fechaInicio:"2025-11-01", fechaVencimiento:"2026-11-01", estado:"activa",   asignado:"Clínica",  responsable:"Dr. López",              notas:"" },
-  { id:14, cliente:"Gabriela Núñez",    plan:"VivoLife Premium",     monto:2400, comision:240, fechaInicio:"2025-12-01", fechaVencimiento:"2026-12-01", estado:"renovada", asignado:"Ambos",    responsable:"Pedro Soto / Enf. García",notas:"" },
-];
-
-// ═══════════════════════════════════════════════════
+// ════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════
+// ════════════════════════════════════════
+let sinTok=[], conTok=[], gestion={};
+let crmPage=1, tokPage=1;
+const PER=50;
+let crmFilt=[], tokFilt=[];
+const hoy = new Date(); hoy.setHours(0,0,0,0);
 
-let renewals = [];
-let cfg = {};
-let charts_ = {};
-let deletingId = null;
-
-// ═══════════════════════════════════════════════════
+// ════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════
-
+// ════════════════════════════════════════
 function init() {
-  const stored    = localStorage.getItem('rv_data');
-  const storedCfg = localStorage.getItem('rv_config');
+  gestion = JSON.parse(localStorage.getItem('rv9_g')||'{}');
 
-  renewals = stored    ? JSON.parse(stored)    : JSON.parse(JSON.stringify(SAMPLE));
-  cfg      = storedCfg ? JSON.parse(storedCfg) : { metaCAS: 30, metaClinica: 25 };
+  if (window.SIN_TOKEN && window.SIN_TOKEN.length) {
+    sinTok = window.SIN_TOKEN;
+    conTok = window.CON_TOKEN || [];
+  } else {
+    // muestra mínima si no hay datos
+    sinTok = [{id:1,c:"Sin datos — sube datos.js",t:"",e:"",p:"Vivolife",v:"",s:"active",m:0,com:0,u:""}];
+    conTok = [];
+  }
 
-  document.getElementById('lastUpdate').textContent =
-    'Actualizado: ' + new Date().toLocaleDateString('es-MX');
-  document.getElementById('chartYear').textContent = new Date().getFullYear();
+  // Ordenar sin tokenizar: mora/overdue primero, luego por días asc
+  sinTok.sort((a,b)=>{
+    const da = getDias(a.v), db = getDias(b.v);
+    const ma = a.s==='overdue'||da<0, mb = b.s==='overdue'||db<0;
+    if (ma && !mb) return -1; if (!ma && mb) return 1;
+    return da - db;
+  });
+  conTok.sort((a,b)=> getDias(a.v)-getDias(b.v));
 
+  // KPIs reales
+  const total = sinTok.length + conTok.length;
+  const pct   = total ? (conTok.length/total*100).toFixed(1) : 0;
+  const moraS = sinTok.filter(r=>r.s==='overdue'||getDias(r.v)<0).length;
+  const moraC = conTok.filter(r=>r.s==='overdue'||getDias(r.v)<0).length;
+
+  document.getElementById('k-total').textContent = total.toLocaleString('es-GT');
+  document.getElementById('k-tok').textContent   = conTok.length.toLocaleString('es-GT');
+  document.getElementById('k-pct').textContent   = pct + '%';
+  document.getElementById('k-bar').style.width   = pct + '%';
+  document.getElementById('k-sin').textContent   = sinTok.length.toLocaleString('es-GT');
+  document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${(sinTok.length-moraS)} activos`;
+  document.getElementById('b-crm').textContent   = sinTok.length.toLocaleString('es-GT');
+  document.getElementById('b-tok').textContent   = conTok.length.toLocaleString('es-GT');
+
+  startClock();
   renderAll();
 }
 
-function persist() { localStorage.setItem('rv_data', JSON.stringify(renewals)); }
-
-// ═══════════════════════════════════════════════════
-// PRIORITY / HELPERS
-// ═══════════════════════════════════════════════════
-
-function diasRestantes(fv) {
-  const hoy   = new Date(); hoy.setHours(0,0,0,0);
-  const vence = new Date(fv + 'T00:00:00');
-  return Math.ceil((vence - hoy) / 86400000);
+function startClock(){
+  const D=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const M=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const t=()=>{const n=new Date();document.getElementById('clock').textContent=`${D[n.getDay()]} ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()} · ${n.toTimeString().split(' ')[0]}`;};
+  t(); setInterval(t,1000);
 }
 
-function prioridad(r) {
-  if (r.estado === 'renovada')
-    return { nivel:'RENOVADA', cls:'pri-renovada', rowCls:'row-renovada', icon:'🟣', dias:null };
-  const d = diasRestantes(r.fechaVencimiento);
-  if (d < 0)   return { nivel:'VENCIDA',  cls:'pri-vencida',  rowCls:'row-vencida',  icon:'🔴', dias:d };
-  if (d <= 7)  return { nivel:'URGENTE',  cls:'pri-urgente',  rowCls:'row-urgente',  icon:'🟠', dias:d };
-  if (d <= 30) return { nivel:'PRÓXIMA',  cls:'pri-proxima',  rowCls:'row-proxima',  icon:'🟡', dias:d };
-  if (d <= 60) return { nivel:'MEDIA',    cls:'pri-media',    rowCls:'',             icon:'🔵', dias:d };
-  return          { nivel:'BAJA',     cls:'pri-baja',     rowCls:'',             icon:'🟢', dias:d };
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
+const getDias = v => { try{return Math.ceil((new Date(v+'T00:00:00')-hoy)/86400000);}catch{return 9999;} };
+const esMora  = r => r.s==='overdue'||getDias(r.v)<0;
+const fmtQ    = n => 'Q '+(n||0).toLocaleString('es-GT');
+const fmtDate = v => { try{return new Date(v+'T00:00:00').toLocaleDateString('es-GT');}catch{return v||'—';} };
+
+function diasTxt(r){
+  const d=getDias(r.v);
+  if(esMora(r)) return `<span style="color:#dc2626;font-weight:800">${Math.abs(d)}d vencida</span>`;
+  if(d<=7)  return `<span style="color:#ea580c;font-weight:700">${d}d</span>`;
+  if(d<=30) return `<span style="color:#d97706;font-weight:700">${d}d</span>`;
+  return `<span style="color:#64748b">${d}d</span>`;
 }
 
-function asignadoEfectivo(r) {
-  if (r.estado === 'renovada') return r.asignado;
-  const d = diasRestantes(r.fechaVencimiento);
-  if (d < 0 || d <= 7) return 'CAS';
-  if (d <= 30)         return 'Ambos';
-  return r.asignado;
+const getG  = id => gestion[id]||{est:'pendiente',f1:'',f2:'',n:''};
+function saveG(id,o){gestion[id]=o;localStorage.setItem('rv9_g',JSON.stringify(gestion));}
+
+// ════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════
+function setTab(t){
+  ['crm','tok'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+    document.getElementById('tab-'+x).classList.toggle(x,true);
+    document.getElementById('panel-'+x).classList.toggle('d-none',x!==t);
+  });
 }
 
-function fmt(n) {
-  return '$' + (n||0).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+// ════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════
+function renderAll(){renderStats();renderCRM();renderTok();}
+
+function renderStats(){
+  const labs={pendiente:['🔘','pend','Pendiente'],primer_intento:['📞','llam','1er intento'],segundo_intento:['📞📞','seg','2do intento'],renovado:['✅','renov','Renovado'],no_renueva:['❌','norec','No renueva']};
+  const cnt={pendiente:0,primer_intento:0,segundo_intento:0,renovado:0,no_renueva:0};
+  sinTok.forEach(r=>{const e=getG(r.id).est;cnt[e]=(cnt[e]||0)+1;});
+  let h=`<span class="chip"><i class="fas fa-users" style="color:#1a3c5e"></i>${sinTok.length.toLocaleString('es-GT')} total</span>`;
+  Object.entries(labs).forEach(([k,[ic,cl,lb]])=>{
+    if(cnt[k]>0) h+=`<span class="chip ${cl}">${ic} ${lb}: <strong>${cnt[k].toLocaleString('es-GT')}</strong></span>`;
+  });
+  document.getElementById('crmStats').innerHTML=h;
 }
 
-// ═══════════════════════════════════════════════════
-// RENDER ALL
-// ═══════════════════════════════════════════════════
+// ── CRM ──
+function renderCRM(){
+  const q  = document.getElementById('crmQ').value.toLowerCase();
+  const fe = document.getElementById('crmEst').value;
+  const fp = document.getElementById('crmPlan').value;
+  const fm = document.getElementById('crmMora').value;
 
-function renderAll() {
-  renderAlerts();
-  renderKPIs();
-  renderProgress();
-  renderCommissions();
-  renderTable();
-  renderCharts();
-}
-
-// ═══════════════════════════════════════════════════
-// ALERTS
-// ═══════════════════════════════════════════════════
-
-function renderAlerts() {
-  const venc  = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) < 0);
-  const urg   = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) >= 0 && diasRestantes(r.fechaVencimiento) <= 7);
-  const prox  = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) > 7  && diasRestantes(r.fechaVencimiento) <= 30);
-
-  const banner = document.getElementById('alertBanner');
-  if (!venc.length && !urg.length && !prox.length) { banner.classList.add('d-none'); return; }
-  banner.classList.remove('d-none');
-
-  let html = '<div class="d-flex flex-wrap gap-2 align-items-center">';
-  html += '<strong class="me-1"><i class="fas fa-triangle-exclamation me-1 text-danger"></i>Alertas:</strong>';
-  if (venc.length) html += `<span class="badge bg-danger p-2">🔴 ${venc.length} VENCIDA${venc.length>1?'S':''} — CAS actuar YA</span>`;
-  if (urg.length)  html += `<span class="badge bg-warning text-dark p-2">🟠 ${urg.length} URGENTE${urg.length>1?'S':''} — vence en ≤7 días → CAS</span>`;
-  if (prox.length) html += `<span class="badge bg-info text-dark p-2">🟡 ${prox.length} PRÓXIMA${prox.length>1?'S':''} — vence en ≤30 días → CAS + Clínica</span>`;
-  html += '</div>';
-  document.getElementById('alertContent').innerHTML = html;
-}
-
-// ═══════════════════════════════════════════════════
-// KPI CARDS
-// ═══════════════════════════════════════════════════
-
-function renderKPIs() {
-  const total    = renewals.length;
-  const venc     = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) < 0).length;
-  const urg      = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) >= 0 && diasRestantes(r.fechaVencimiento) <= 7).length;
-  const prox     = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) > 7  && diasRestantes(r.fechaVencimiento) <= 30).length;
-  const renov    = renewals.filter(r => r.estado === 'renovada').length;
-  const comPag   = renewals.filter(r => r.estado === 'renovada').reduce((s,r) => s+(r.comision||0), 0);
-
-  const kpis = [
-    { label:'Total',            val:total, icon:'fa-list-check',    color:'#1a3c5e' },
-    { label:'Vencidas',         val:venc,  icon:'fa-circle-xmark',  color:'#e74c3c' },
-    { label:'Urgentes ≤7 días', val:urg,   icon:'fa-clock',         color:'#e67e22' },
-    { label:'Próximas ≤30 días',val:prox,  icon:'fa-calendar-day',  color:'#f39c12' },
-    { label:'Renovadas',        val:renov, icon:'fa-circle-check',  color:'#27ae60' },
-    { label:'Comisiones pag.',  val:fmt(comPag), icon:'fa-coins',   color:'#8e44ad' },
-  ];
-
-  document.getElementById('kpiSection').innerHTML = kpis.map(k => `
-    <div class="col-6 col-md-4 col-xl-2">
-      <div class="kpi-card text-center">
-        <div style="color:${k.color}" class="mb-1"><i class="fas ${k.icon} fa-2x"></i></div>
-        <div class="h3 fw-bold mb-0" style="color:${k.color}">${k.val}</div>
-        <div class="small text-muted">${k.label}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════════════════
-// PROGRESS BARS
-// ═══════════════════════════════════════════════════
-
-function renderProgress() {
-  const rCAS     = renewals.filter(r => r.estado === 'renovada' && (r.asignado === 'CAS'     || r.asignado === 'Ambos')).length;
-  const rClinica = renewals.filter(r => r.estado === 'renovada' && (r.asignado === 'Clínica' || r.asignado === 'Ambos')).length;
-
-  const pCAS     = Math.min(100, Math.round(rCAS     / cfg.metaCAS     * 100));
-  const pClinica = Math.min(100, Math.round(rClinica / cfg.metaClinica * 100));
-
-  const color = pct => pct >= 100 ? '#27ae60' : pct >= 60 ? '#f39c12' : '#e74c3c';
-
-  function barHTML(got, meta, pct, id) {
-    const c = color(pct);
-    return `
-      <div class="d-flex justify-content-between mb-1">
-        <span class="fw-semibold">${got} / ${meta} renovaciones</span>
-        <span class="fw-bold" style="color:${c}">${pct}%</span>
-      </div>
-      <div class="progress mb-3" style="height:22px">
-        <div class="progress-bar" style="width:${pct}%;background:${c};">${pct >= 15 ? pct+'%' : ''}</div>
-      </div>
-      <small class="text-muted">Meta anual: ${meta} renovaciones</small>
-    `;
-  }
-
-  document.getElementById('casProgress').innerHTML     = barHTML(rCAS,     cfg.metaCAS,     pCAS,     'cas');
-  document.getElementById('clinicaProgress').innerHTML = barHTML(rClinica, cfg.metaClinica, pClinica, 'clinica');
-}
-
-// ═══════════════════════════════════════════════════
-// COMMISSIONS
-// ═══════════════════════════════════════════════════
-
-function renderCommissions() {
-  const renov   = renewals.filter(r => r.estado === 'renovada');
-  const total   = renov.reduce((s,r) => s+(r.comision||0), 0);
-  const cas     = renov.filter(r => r.asignado === 'CAS'     || r.asignado === 'Ambos').reduce((s,r) => s+(r.comision||0), 0);
-  const clin    = renov.filter(r => r.asignado === 'Clínica' || r.asignado === 'Ambos').reduce((s,r) => s+(r.comision||0), 0);
-  const pend    = renewals.filter(r => r.estado !== 'renovada').reduce((s,r) => s+(r.comision||0), 0);
-
-  document.getElementById('commissionSummary').innerHTML = `
-    <div class="row g-2 text-center">
-      <div class="col-6">
-        <div class="small opacity-75">Total Pagado</div>
-        <div class="h4 fw-bold">${fmt(total)}</div>
-      </div>
-      <div class="col-6">
-        <div class="small opacity-75">Por Cobrar</div>
-        <div class="h4 fw-bold" style="color:#ffd700">${fmt(pend)}</div>
-      </div>
-      <div class="col-6">
-        <div class="small opacity-75">CAS</div>
-        <div class="fw-bold fs-5">${fmt(cas)}</div>
-      </div>
-      <div class="col-6">
-        <div class="small opacity-75">Clínica</div>
-        <div class="fw-bold fs-5">${fmt(clin)}</div>
-      </div>
-    </div>
-  `;
-}
-
-// ═══════════════════════════════════════════════════
-// TABLE
-// ═══════════════════════════════════════════════════
-
-function renderTable() {
-  const q  = document.getElementById('searchInput').value.toLowerCase();
-  const fe = document.getElementById('filterEstado').value;
-  const fa = document.getElementById('filterAsignado').value;
-
-  let rows = renewals.filter(r => {
-    if (q && !r.cliente.toLowerCase().includes(q) && !r.plan.toLowerCase().includes(q)) return false;
-
-    if (fe) {
-      const d = diasRestantes(r.fechaVencimiento);
-      if (fe === 'vencida'  && !(r.estado !== 'renovada' && d < 0))               return false;
-      if (fe === 'urgente'  && !(r.estado !== 'renovada' && d >= 0 && d <= 7))    return false;
-      if (fe === 'proxima'  && !(r.estado !== 'renovada' && d > 7 && d <= 30))    return false;
-      if (fe === 'activa'   && !(r.estado !== 'renovada' && d > 30))              return false;
-      if (fe === 'renovada' && r.estado !== 'renovada')                           return false;
-    }
-
-    if (fa) {
-      const ae = asignadoEfectivo(r);
-      if (fa === 'CAS'     && ae !== 'CAS')     return false;
-      if (fa === 'Clínica' && ae !== 'Clínica') return false;
-      if (fa === 'Ambos'   && ae !== 'Ambos')   return false;
-    }
+  crmFilt = sinTok.filter(r=>{
+    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.e||'').toLowerCase().includes(q)) return false;
+    if(fp&&r.p!==fp) return false;
+    if(fm==='overdue'&&!esMora(r)) return false;
+    if(fm==='active'&&esMora(r)) return false;
+    if(fe){const g=getG(r.id);if(g.est!==fe)return false;}
     return true;
   });
 
-  rows.sort((a, b) => {
-    if (a.estado === 'renovada' && b.estado !== 'renovada') return 1;
-    if (a.estado !== 'renovada' && b.estado === 'renovada') return -1;
-    return diasRestantes(a.fechaVencimiento) - diasRestantes(b.fechaVencimiento);
-  });
+  const total=crmFilt.length, pages=Math.max(1,Math.ceil(total/PER));
+  if(crmPage>pages) crmPage=1;
+  const start=(crmPage-1)*PER, slice=crmFilt.slice(start,start+PER);
 
-  document.getElementById('tableCount').textContent = `${rows.length} resultado${rows.length !== 1 ? 's' : ''}`;
+  document.getElementById('crmCnt').textContent=`${total.toLocaleString('es-GT')} resultado${total!==1?'s':''}`;
+  document.getElementById('crmPag').textContent=`Página ${crmPage} de ${pages} · ${total.toLocaleString('es-GT')} registros`;
+  document.getElementById('crmPrev').disabled=crmPage<=1;
+  document.getElementById('crmNext').disabled=crmPage>=pages;
 
-  const tbody = document.getElementById('tableBody');
-  if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted py-5">Sin resultados</td></tr>';
+  if(!slice.length){
+    document.getElementById('crmBody').innerHTML='<tr><td colspan="13" class="text-center py-5" style="color:#94a3b8">Sin resultados para los filtros seleccionados</td></tr>';
     return;
   }
 
-  tbody.innerHTML = rows.map(r => {
-    const p   = prioridad(r);
-    const ae  = asignadoEfectivo(r);
-    const d   = diasRestantes(r.fechaVencimiento);
-    const dTxt = r.estado === 'renovada' ? '—' : d < 0 ? `${Math.abs(d)}d vencida` : `${d}d`;
-    const dClr = r.estado === 'renovada' ? '' : d < 0 ? 'text-danger fw-bold' : d <= 30 ? 'text-warning fw-bold' : 'text-muted';
+  const opts=[['pendiente','🔘 Pendiente'],['primer_intento','📞 1er intento'],['segundo_intento','📞📞 2do intento'],['renovado','✅ Renovado'],['no_renueva','❌ No renueva']];
 
-    const aeBadge = ae === 'CAS'
-      ? '<span class="badge bg-primary">CAS</span>'
-      : ae === 'Clínica'
-      ? '<span class="badge bg-success">Clínica</span>'
-      : '<span class="badge bg-secondary">CAS + Clínica</span>';
-
-    const estad = {
-      activa:  '<span class="badge bg-primary">Activa</span>',
-      renovada:'<span class="badge bg-success">Renovada</span>',
-      vencida: '<span class="badge bg-danger">Vencida</span>',
-    }[r.estado] || r.estado;
-
-    const vd = new Date(r.fechaVencimiento + 'T00:00:00').toLocaleDateString('es-MX');
-
-    return `
-      <tr class="${p.rowCls}">
-        <td class="fw-semibold">${r.cliente}</td>
-        <td><small>${r.plan}</small></td>
-        <td><small>${vd}</small></td>
-        <td><small class="${dClr}">${dTxt}</small></td>
-        <td><span class="badge ${p.cls} px-2">${p.icon} ${p.nivel}</span></td>
-        <td>${aeBadge}</td>
-        <td><small>${r.responsable || '—'}</small></td>
-        <td>${estad}</td>
-        <td><small class="fw-semibold">${fmt(r.comision)}</small></td>
-        <td>
-          <div class="d-flex gap-1">
-            ${r.estado !== 'renovada' ? `<button class="btn btn-success btn-xs btn-sm py-0 px-2" onclick="markRenewed(${r.id})" title="Marcar como renovada"><i class="fas fa-check"></i></button>` : ''}
-            <button class="btn btn-outline-primary btn-sm btn-xs py-0 px-2" onclick="openModal(${r.id})" title="Editar"><i class="fas fa-pen"></i></button>
-            <button class="btn btn-outline-danger btn-sm btn-xs py-0 px-2" onclick="askDelete(${r.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
-          </div>
-        </td>
-      </tr>`;
+  document.getElementById('crmBody').innerHTML=slice.map((r,i)=>{
+    const g=getG(r.id);
+    const mora=esMora(r);
+    const rowCls=g.est==='renovado'?'done-row':mora?'mora-row':'';
+    const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
+    // Mostrar fecha2 solo si ya hizo 1er intento
+    const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
+    return `<tr class="${rowCls}" id="r${r.id}">
+      <td><input type="checkbox" class="crm-chk" value="${r.id}"></td>
+      <td style="color:#94a3b8;font-size:.72rem">${start+i+1}</td>
+      <td>
+        <div style="font-weight:700;font-size:.86rem">${r.c}</div>
+        ${mora?'<span style="font-size:.68rem;color:#dc2626;font-weight:700">⚠ EN MORA</span>':''}
+      </td>
+      <td style="font-weight:800;font-size:.9rem;letter-spacing:.3px;color:#1a3c5e">${r.t||'—'}</td>
+      <td style="font-size:.77rem;color:#475569">${r.p}</td>
+      <td style="white-space:nowrap;font-size:.8rem">${fmtDate(r.v)}</td>
+      <td style="white-space:nowrap">${diasTxt(r)}</td>
+      <td>
+        <select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)">
+          ${selOpts}
+        </select>
+      </td>
+      <td>
+        <input type="date" class="finp" value="${g.f1||''}"
+          onchange="chgFecha(${r.id},'f1',this.value)"
+          title="Fecha 1er intento de contacto">
+      </td>
+      <td>
+        <input type="date" class="finp" value="${g.f2||''}"
+          onchange="chgFecha(${r.id},'f2',this.value)"
+          title="Fecha 2do intento / seguimiento"
+          ${showF2?'':'style="opacity:.3;pointer-events:none"'}>
+      </td>
+      <td>
+        <input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}"
+          placeholder="Notas..."
+          onchange="chgNota(${r.id},this.value)">
+      </td>
+      <td class="text-end" style="font-weight:600;white-space:nowrap">${fmtQ(r.m)}</td>
+      <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(r.com)}</td>
+    </tr>`;
   }).join('');
 }
 
-function resetFilters() {
-  document.getElementById('searchInput').value  = '';
-  document.getElementById('filterEstado').value = '';
-  document.getElementById('filterAsignado').value = '';
-  renderTable();
-}
+// ── Tokenizados ──
+function renderTok(){
+  const q  = document.getElementById('tokQ').value.toLowerCase();
+  const fp = document.getElementById('tokPlan').value;
+  const fm = document.getElementById('tokMora').value;
 
-// ═══════════════════════════════════════════════════
-// CHARTS
-// ═══════════════════════════════════════════════════
-
-function renderCharts() {
-  const yr = new Date().getFullYear();
-
-  const venc  = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) < 0).length;
-  const urg   = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) >= 0 && diasRestantes(r.fechaVencimiento) <= 7).length;
-  const prox  = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) > 7  && diasRestantes(r.fechaVencimiento) <= 30).length;
-  const act   = renewals.filter(r => r.estado !== 'renovada' && diasRestantes(r.fechaVencimiento) > 30).length;
-  const renov = renewals.filter(r => r.estado === 'renovada').length;
-
-  if (charts_.status) charts_.status.destroy();
-  charts_.status = new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Vencidas','Urgentes','Próximas','Activas','Renovadas'],
-      datasets: [{
-        data: [venc, urg, prox, act, renov],
-        backgroundColor: ['#e74c3c','#e67e22','#f39c12','#3498db','#27ae60'],
-        borderWidth: 3, borderColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position:'bottom', labels:{ boxWidth:12, font:{size:11} } } }
-    }
+  tokFilt = conTok.filter(r=>{
+    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)) return false;
+    if(fp&&r.p!==fp) return false;
+    if(fm==='overdue'&&!esMora(r)) return false;
+    if(fm==='active'&&esMora(r)) return false;
+    return true;
   });
 
-  const months  = Array(12).fill(0);
-  const monthsR = Array(12).fill(0);
-  renewals.forEach(r => {
-    const d = new Date(r.fechaVencimiento + 'T00:00:00');
-    if (d.getFullYear() === yr) {
-      months[d.getMonth()]++;
-      if (r.estado === 'renovada') monthsR[d.getMonth()]++;
-    }
-  });
+  const total=tokFilt.length, pages=Math.max(1,Math.ceil(total/PER));
+  if(tokPage>pages) tokPage=1;
+  const start=(tokPage-1)*PER, slice=tokFilt.slice(start,start+PER);
 
-  if (charts_.monthly) charts_.monthly.destroy();
-  charts_.monthly = new Chart(document.getElementById('monthlyChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-      datasets: [
-        { label:'Total vencimientos', data:months,  backgroundColor:'rgba(45,125,210,.25)', borderColor:'#2d7dd2', borderWidth:2 },
-        { label:'Renovadas',          data:monthsR, backgroundColor:'rgba(39,174,96,.6)',   borderColor:'#27ae60', borderWidth:2 },
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: { y:{ beginAtZero:true, ticks:{stepSize:1} } },
-      plugins: { legend:{ position:'bottom' } }
-    }
-  });
-}
+  document.getElementById('tokCnt').textContent=`${total.toLocaleString('es-GT')} resultado${total!==1?'s':''}`;
+  document.getElementById('tokPag').textContent=`Página ${tokPage} de ${pages} · ${total.toLocaleString('es-GT')} registros`;
+  document.getElementById('tokPrev').disabled=tokPage<=1;
+  document.getElementById('tokNext').disabled=tokPage>=pages;
 
-// ═══════════════════════════════════════════════════
-// MODAL: ADD / EDIT
-// ═══════════════════════════════════════════════════
-
-function openModal(id) {
-  document.getElementById('renewalForm').reset();
-  document.getElementById('editId').value = '';
-
-  if (id) {
-    const r = renewals.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('modalTitle').textContent      = 'Editar Renovación';
-    document.getElementById('editId').value                = r.id;
-    document.getElementById('fCliente').value              = r.cliente;
-    document.getElementById('fPlan').value                 = r.plan;
-    document.getElementById('fFechaInicio').value          = r.fechaInicio;
-    document.getElementById('fFechaVencimiento').value     = r.fechaVencimiento;
-    document.getElementById('fMonto').value                = r.monto  || '';
-    document.getElementById('fComision').value             = r.comision || '';
-    document.getElementById('fEstado').value               = r.estado;
-    document.getElementById('fAsignado').value             = r.asignado;
-    document.getElementById('fResponsable').value          = r.responsable || '';
-    document.getElementById('fNotas').value                = r.notas || '';
-  } else {
-    document.getElementById('modalTitle').textContent = 'Nueva Renovación';
-    const today = new Date().toISOString().split('T')[0];
-    const next  = new Date(); next.setFullYear(next.getFullYear() + 1);
-    document.getElementById('fFechaInicio').value      = today;
-    document.getElementById('fFechaVencimiento').value = next.toISOString().split('T')[0];
+  if(!slice.length){
+    document.getElementById('tokBody').innerHTML='<tr><td colspan="9" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';
+    return;
   }
 
-  new bootstrap.Modal(document.getElementById('renewalModal')).show();
+  document.getElementById('tokBody').innerHTML=slice.map((r,i)=>{
+    const d=getDias(r.v);
+    const dTxt=esMora(r)?`<span style="color:#dc2626;font-weight:700">${Math.abs(d)}d vencida</span>`:d<=30?`<span style="color:#d97706">${d}d</span>`:`${d}d`;
+    const pagOk=(r.u||'').toLowerCase().includes('approved');
+    return `<tr>
+      <td style="color:#94a3b8;font-size:.72rem">${start+i+1}</td>
+      <td style="font-weight:600">${r.c}</td>
+      <td style="font-weight:700;color:#1a3c5e">${r.t||'—'}</td>
+      <td style="font-size:.77rem;color:#64748b">${r.e||'—'}</td>
+      <td style="font-size:.77rem;color:#475569">${r.p}</td>
+      <td style="white-space:nowrap;font-size:.8rem">${fmtDate(r.v)}</td>
+      <td style="white-space:nowrap">${dTxt}</td>
+      <td style="font-size:.77rem;color:${pagOk?'#15803d':'#dc2626'}">${r.u||'—'}</td>
+      <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(r.m)}</td>
+    </tr>`;
+  }).join('');
 }
 
-function saveRenewal() {
-  const form = document.getElementById('renewalForm');
-  if (!form.checkValidity()) { form.reportValidity(); return; }
-
-  const eid = document.getElementById('editId').value;
-  const payload = {
-    cliente:           document.getElementById('fCliente').value.trim(),
-    plan:              document.getElementById('fPlan').value,
-    fechaInicio:       document.getElementById('fFechaInicio').value,
-    fechaVencimiento:  document.getElementById('fFechaVencimiento').value,
-    monto:             parseFloat(document.getElementById('fMonto').value)    || 0,
-    comision:          parseFloat(document.getElementById('fComision').value) || 0,
-    estado:            document.getElementById('fEstado').value,
-    asignado:          document.getElementById('fAsignado').value,
-    responsable:       document.getElementById('fResponsable').value.trim(),
-    notas:             document.getElementById('fNotas').value.trim(),
-  };
-
-  if (eid) {
-    const i = renewals.findIndex(r => r.id === parseInt(eid));
-    if (i !== -1) renewals[i] = { ...renewals[i], ...payload };
-  } else {
-    const newId = Math.max(0, ...renewals.map(r => r.id)) + 1;
-    renewals.push({ id: newId, ...payload });
+// ════════════════════════════════════════
+// ACCIONES
+// ════════════════════════════════════════
+function chgEst(id,sel){
+  const g=getG(id);
+  g.est=sel.value;
+  // Auto fecha 1er intento
+  if(g.est==='primer_intento'&&!g.f1){
+    g.f1=new Date().toISOString().split('T')[0];
+    const row=document.getElementById('r'+id);
+    if(row) row.querySelectorAll('.finp')[0].value=g.f1;
   }
-
-  persist();
-  bootstrap.Modal.getInstance(document.getElementById('renewalModal')).hide();
-  renderAll();
+  // Auto fecha 2do intento
+  if(g.est==='segundo_intento'&&!g.f2){
+    g.f2=new Date().toISOString().split('T')[0];
+    const row=document.getElementById('r'+id);
+    if(row) row.querySelectorAll('.finp')[1].value=g.f2;
+  }
+  saveG(id,g);
+  sel.className='est-dd '+g.est;
+  const row=document.getElementById('r'+id);
+  if(row) row.className=g.est==='renovado'?'done-row':(esMora(sinTok.find(x=>x.id==id)||{})?'mora-row':'');
+  renderStats();
 }
 
-// ═══════════════════════════════════════════════════
-// MARK RENEWED
-// ═══════════════════════════════════════════════════
+function chgFecha(id,campo,val){const g=getG(id);g[campo]=val;saveG(id,g);}
+function chgNota(id,val){const g=getG(id);g.n=val;saveG(id,g);}
 
-function markRenewed(id) {
-  const r = renewals.find(x => x.id === id);
-  if (!r) return;
-  r.estado = 'renovada';
-  const nv = new Date(r.fechaVencimiento + 'T00:00:00');
-  nv.setFullYear(nv.getFullYear() + 1);
-  r.fechaVencimiento = nv.toISOString().split('T')[0];
-  persist();
-  renderAll();
-}
+function pgCRM(d){crmPage+=d;renderCRM();window.scrollTo(0,300);}
+function pgTok(d){tokPage+=d;renderTok();window.scrollTo(0,300);}
 
-// ═══════════════════════════════════════════════════
-// DELETE
-// ═══════════════════════════════════════════════════
+function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora'].forEach(x=>document.getElementById(x).value='');crmPage=1;renderCRM();}
+function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
+function selAll(){const c=document.getElementById('chkAll').checked;document.querySelectorAll('.crm-chk').forEach(x=>x.checked=c);}
 
-function askDelete(id) {
-  deletingId = id;
-  const r = renewals.find(x => x.id === id);
-  document.getElementById('deleteClientName').textContent = r ? r.cliente : '';
-  document.getElementById('confirmDeleteBtn').onclick = () => {
-    renewals = renewals.filter(x => x.id !== deletingId);
-    persist();
-    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-    renderAll();
-  };
-  new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
-
-// ═══════════════════════════════════════════════════
-// CONFIG MODAL
-// ═══════════════════════════════════════════════════
-
-function showConfigModal() {
-  document.getElementById('cfgMetaCAS').value     = cfg.metaCAS;
-  document.getElementById('cfgMetaClinica').value = cfg.metaClinica;
-  new bootstrap.Modal(document.getElementById('configModal')).show();
-}
-
-function saveConfig() {
-  const c = parseInt(document.getElementById('cfgMetaCAS').value);
-  const l = parseInt(document.getElementById('cfgMetaClinica').value);
-  if (c > 0) cfg.metaCAS     = c;
-  if (l > 0) cfg.metaClinica = l;
-  localStorage.setItem('rv_config', JSON.stringify(cfg));
-  bootstrap.Modal.getInstance(document.getElementById('configModal')).hide();
-  renderProgress();
-}
-
-// ═══════════════════════════════════════════════════
-// EXPORT CSV
-// ═══════════════════════════════════════════════════
-
-function exportCSV() {
-  const headers = ['ID','Cliente','Plan','Fecha Inicio','Fecha Vencimiento','Días Restantes','Prioridad','Estado','Asignado','Responsable','Monto','Comisión','Notas'];
-  const rows = renewals.map(r => {
-    const p = prioridad(r);
-    const d = r.estado === 'renovada' ? '—' : diasRestantes(r.fechaVencimiento);
-    return [r.id, r.cliente, r.plan, r.fechaInicio, r.fechaVencimiento, d, p.nivel,
-            r.estado, asignadoEfectivo(r), r.responsable, r.monto, r.comision, r.notas
-    ].map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
+// ════════════════════════════════════════
+// EXPORTS
+// ════════════════════════════════════════
+function exportarCRM(){
+  const h=['ID','Nombre','Teléfono','Email','Plan','Vencimiento','Días','Estado','Fecha 1er intento','Fecha 2do intento','Notas','Monto Q','Comisión Q'];
+  const rows=sinTok.map(r=>{
+    const g=getG(r.id),d=getDias(r.v);
+    const dTxt=esMora(r)?`${Math.abs(d)}d vencida`:`${d}d`;
+    return [r.id,r.c,r.t,r.e,r.p,r.v,dTxt,g.est,g.f1,g.f2,g.n,r.m,r.com].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
   });
-
-  const csv  = '﻿' + [headers.join(','), ...rows].join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url;
-  a.download = `renovaciones_vivolife_${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  descargarCSV('crm_sinTokenizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
 }
 
-// ═══════════════════════════════════════════════════
-// START
-// ═══════════════════════════════════════════════════
+function exportarTok(){
+  const h=['ID','Nombre','Teléfono','Email','Plan','Vencimiento','Último pago','Monto Q'];
+  const rows=conTok.map(r=>[r.id,r.c,r.t,r.e,r.p,r.v,r.u,r.m].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  descargarCSV('cobro_automatico_conTokenizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
+}
+
+function descargarCSV(nombre,contenido){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['﻿'+contenido],{type:'text/csv;charset=utf-8;'}));
+  a.download=nombre; a.click();
+}
+
 init();
 </script>
 </body>
