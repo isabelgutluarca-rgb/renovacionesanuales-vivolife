@@ -177,9 +177,10 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
         <option value="Vivolife Plus">Vivolife Plus</option>
       </select>
       <select id="crmMora" onchange="renderCRM()">
-        <option value="">Activos + Mora</option>
-        <option value="overdue">Solo en mora</option>
-        <option value="active">Solo activos</option>
+        <option value="">Todos</option>
+        <option value="mora">🔴 Solo en mora</option>
+        <option value="proximo">🟡 Próximos a vencer (≤60d)</option>
+        <option value="activo">🟢 Solo activos</option>
       </select>
       <button class="pbtn ms-auto" onclick="limpiarCRM()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
       <span id="crmCnt" style="font-size:.75rem;color:#64748b"></span>
@@ -237,9 +238,10 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
         <option value="Vivolife Plus">Vivolife Plus</option>
       </select>
       <select id="tokMora" onchange="renderTok()">
-        <option value="">Activos + Mora</option>
-        <option value="overdue">Solo en mora</option>
-        <option value="active">Solo activos</option>
+        <option value="">Todos</option>
+        <option value="mora">🔴 Solo en mora</option>
+        <option value="proximo">🟡 Próximos a vencer (≤60d)</option>
+        <option value="activo">🟢 Solo activos</option>
       </select>
       <button class="pbtn ms-auto" onclick="limpiarTok()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
       <span id="tokCnt" style="font-size:.75rem;color:#64748b"></span>
@@ -302,27 +304,27 @@ function init() {
     conTok = [];
   }
 
-  // Ordenar sin tokenizar: mora/overdue primero, luego por días asc
+  // Ordenar: 1º mora (más vencida primero), 2º próximos (fecha más cercana), 3º activos
   sinTok.sort((a,b)=>{
-    const da = getDias(a.v), db = getDias(b.v);
-    const ma = a.s==='overdue'||da<0, mb = b.s==='overdue'||db<0;
-    if (ma && !mb) return -1; if (!ma && mb) return 1;
-    return da - db;
+    const ord = s => s==='mora'?0 : s==='proximo'?1 : 2;
+    if (ord(a.s) !== ord(b.s)) return ord(a.s) - ord(b.s);
+    return getDias(a.v) - getDias(b.v);
   });
   conTok.sort((a,b)=> getDias(a.v)-getDias(b.v));
 
   // KPIs reales
   const total = sinTok.length + conTok.length;
   const pct   = total ? (conTok.length/total*100).toFixed(1) : 0;
-  const moraS = sinTok.filter(r=>r.s==='overdue'||getDias(r.v)<0).length;
-  const moraC = conTok.filter(r=>r.s==='overdue'||getDias(r.v)<0).length;
+  const moraS = sinTok.filter(r=>esMora(r)).length;
+  const moraC = conTok.filter(r=>esMora(r)).length;
 
   document.getElementById('k-total').textContent = total.toLocaleString('es-GT');
   document.getElementById('k-tok').textContent   = conTok.length.toLocaleString('es-GT');
   document.getElementById('k-pct').textContent   = pct + '%';
   document.getElementById('k-bar').style.width   = pct + '%';
   document.getElementById('k-sin').textContent   = sinTok.length.toLocaleString('es-GT');
-  document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${(sinTok.length-moraS)} activos`;
+  const proxS = sinTok.filter(r=>esProx(r)).length;
+  document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${proxS} próximos a vencer`;
   document.getElementById('b-crm').textContent   = sinTok.length.toLocaleString('es-GT');
   document.getElementById('b-tok').textContent   = conTok.length.toLocaleString('es-GT');
 
@@ -341,15 +343,17 @@ function startClock(){
 // HELPERS
 // ════════════════════════════════════════
 const getDias = v => { try{return Math.ceil((new Date(v+'T00:00:00')-hoy)/86400000);}catch{return 9999;} };
-const esMora  = r => r.s==='overdue'||getDias(r.v)<0;
+const esMora  = r => r.s==='mora' || getDias(r.v)<0;
+const esProx  = r => r.s==='proximo' && getDias(r.v)>=0;
 const fmtQ    = n => 'Q '+(n||0).toLocaleString('es-GT');
 const fmtDate = v => { try{return new Date(v+'T00:00:00').toLocaleDateString('es-GT');}catch{return v||'—';} };
 
 function diasTxt(r){
   const d=getDias(r.v);
   if(esMora(r)) return `<span style="color:#dc2626;font-weight:800">${Math.abs(d)}d vencida</span>`;
-  if(d<=7)  return `<span style="color:#ea580c;font-weight:700">${d}d</span>`;
+  if(d<=7)  return `<span style="color:#ea580c;font-weight:700">${d}d ⚠</span>`;
   if(d<=30) return `<span style="color:#d97706;font-weight:700">${d}d</span>`;
+  if(d<=60) return `<span style="color:#ca8a04;font-weight:600">${d}d</span>`;
   return `<span style="color:#64748b">${d}d</span>`;
 }
 
@@ -393,8 +397,9 @@ function renderCRM(){
   crmFilt = sinTok.filter(r=>{
     if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.e||'').toLowerCase().includes(q)) return false;
     if(fp&&r.p!==fp) return false;
-    if(fm==='overdue'&&!esMora(r)) return false;
-    if(fm==='active'&&esMora(r)) return false;
+    if(fm==='mora'    && !esMora(r))  return false;
+    if(fm==='proximo' && !esProx(r))  return false;
+    if(fm==='activo'  && (esMora(r)||esProx(r))) return false;
     if(fe){const g=getG(r.id);if(g.est!==fe)return false;}
     return true;
   });
@@ -469,8 +474,9 @@ function renderTok(){
   tokFilt = conTok.filter(r=>{
     if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)) return false;
     if(fp&&r.p!==fp) return false;
-    if(fm==='overdue'&&!esMora(r)) return false;
-    if(fm==='active'&&esMora(r)) return false;
+    if(fm==='mora'    && !esMora(r))  return false;
+    if(fm==='proximo' && !esProx(r))  return false;
+    if(fm==='activo'  && (esMora(r)||esProx(r))) return false;
     return true;
   });
 
