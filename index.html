@@ -10,6 +10,56 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;font-size:14px;}
 
+/* ── Perf panel ── */
+.perf-panel{background:#fff;border-bottom:3px solid #e2e8f0;}
+.perf-header{display:flex;align-items:center;justify-content:space-between;padding:10px 24px 0;font-weight:700;font-size:.82rem;color:#1a3c5e;text-transform:uppercase;letter-spacing:.5px;}
+.perf-cfg-btn{border:1px solid #e2e8f0;background:#f8fafc;border-radius:6px;padding:4px 12px;font-size:.76rem;font-weight:600;cursor:pointer;color:#475569;}
+.perf-cfg-btn:hover{background:#f1f5f9;}
+.cfg-panel{padding:12px 24px;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
+.cfg-row{display:flex;gap:32px;flex-wrap:wrap;}
+.cfg-team{display:flex;flex-direction:column;gap:6px;font-size:.8rem;}
+.cfg-team strong{font-size:.82rem;margin-bottom:2px;}
+.cfg-team.cas strong{color:#1a4fa0;} .cfg-team.clin strong{color:#15803d;}
+.cfg-team label{display:flex;align-items:center;gap:8px;color:#475569;}
+.cfg-team input{border:1px solid #e2e8f0;border-radius:5px;padding:3px 7px;width:80px;font-size:.8rem;}
+
+.perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0;}
+.pkpi-card{padding:14px 18px;border-right:1px solid #e2e8f0;}
+.pkpi-card:last-child{border-right:none;}
+.pkpi-card.highlight-card{background:#fafeff;}
+.pkpi-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:10px;}
+.pkpi-teams{display:flex;gap:0;align-items:stretch;}
+.pkpi-team{flex:1;display:flex;flex-direction:column;gap:3px;padding:0 8px;}
+.pkpi-team:first-child{padding-left:0;}
+.pkpi-team:last-child{padding-right:0;}
+.pkpi-divider{width:1px;background:#e2e8f0;margin:0 4px;}
+.pkpi-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.pkpi-team.cas .pkpi-label{color:#1a4fa0;} .pkpi-team.clin .pkpi-label{color:#15803d;}
+.pkpi-val{font-size:1.4rem;font-weight:900;color:#0f172a;line-height:1.1;}
+.pkpi-val.big-val{font-size:1.6rem;}
+.pkpi-meta{font-size:.68rem;color:#94a3b8;margin-bottom:2px;}
+.pkpi-bar-bg{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin:3px 0;}
+.pkpi-bar-fg{height:100%;border-radius:3px;transition:width .4s;}
+.cas-color{background:#2563eb;} .clin-color{background:#15803d;}
+.pkpi-input{border:1px solid #e2e8f0;border-radius:5px;padding:3px 6px;font-size:.75rem;width:100%;margin-top:4px;background:#f8fafc;color:#1e293b;}
+.pkpi-input:focus{outline:none;border-color:#1a3c5e;}
+.pkpi-pct-lbl{font-size:.65rem;color:#94a3b8;}
+.pkpi-estado{font-size:.7rem;font-weight:700;margin-top:3px;}
+@media(max-width:900px){.perf-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.perf-grid{grid-template-columns:1fr;}}
+
+/* ── Canal metrics ── */
+.canal-panel{background:#fff;border-bottom:2px solid #e2e8f0;padding:0;}
+.canal-header{display:flex;align-items:center;justify-content:space-between;padding:9px 24px;font-weight:700;font-size:.8rem;color:#1a3c5e;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;user-select:none;}
+.canal-header:hover{background:#f8fafc;}
+.canal-body{padding:0 24px 14px;}
+.canal-table{width:100%;border-collapse:collapse;font-size:.79rem;}
+.canal-table th{background:#f1f5f9;color:#475569;padding:6px 10px;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e2e8f0;}
+.canal-table td{padding:6px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.canal-table tbody tr:hover td{background:#fafafa;}
+.canal-bar{height:4px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-top:3px;}
+.canal-bar-fg{height:100%;border-radius:3px;}
+
 /* Header */
 .hdr{background:#1a3c5e;color:#fff;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 .hdr h1{font-size:1.05rem;font-weight:700;margin:0;}
@@ -33,7 +83,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;fo
 .cnt-badge{display:inline-block;border-radius:20px;padding:1px 8px;font-size:.65rem;font-weight:700;margin-left:6px;}
 
 /* Content */
-.content{padding:18px 22px;max-width:1440px;margin:0 auto;}
+.content{padding:18px 22px;max-width:1600px;margin:0 auto;}
 
 /* Info banner */
 .banner{border-radius:9px;padding:11px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px;font-size:.83rem;}
@@ -53,32 +103,49 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;fo
 
 /* Tabla CRM */
 .twrap{background:#fff;border-radius:9px;border:1px solid #e2e8f0;overflow:hidden;}
-table{width:100%;border-collapse:collapse;font-size:.8rem;}
-thead th{background:#1a3c5e;color:#fff;padding:9px 10px;text-align:left;font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+table{width:100%;border-collapse:collapse;font-size:.79rem;}
+thead th{background:#1a3c5e;color:#fff;padding:8px 8px;text-align:left;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
 thead.green-head th{background:#15803d;}
-tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+tbody td{padding:7px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
 tbody tr:hover td{background:#fafafa;}
 tbody tr.mora-row td{background:#fff5f5;}
 tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 
 /* Estado dropdown */
-.est-dd{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;font-weight:600;background:#f8fafc;cursor:pointer;min-width:148px;}
+.est-dd{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.74rem;font-weight:600;background:#f8fafc;cursor:pointer;min-width:145px;}
 .est-dd.pendiente{background:#f1f5f9;color:#475569;}
 .est-dd.primer_intento{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;}
 .est-dd.segundo_intento{background:#fef3c7;color:#92400e;border-color:#fde68a;}
 .est-dd.renovado{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
 .est-dd.no_renueva{background:#fef2f2;color:#dc2626;border-color:#fecaca;}
 
-/* Fecha / notas inputs */
-.finp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;background:#f8fafc;width:128px;}
+/* Canal dropdown */
+.canal-dd{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.74rem;font-weight:600;background:#f8fafc;cursor:pointer;min-width:90px;}
+.canal-dd.CAS{background:#eff6ff;color:#1a4fa0;border-color:#bfdbfe;}
+.canal-dd.Clinica{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
+.canal-dd.WhatsApp{background:#f0fdf4;color:#065f46;border-color:#a7f3d0;}
+.canal-dd.Presencial{background:#fef3c7;color:#92400e;border-color:#fde68a;}
+.canal-dd.Digital{background:#f5f3ff;color:#5b21b6;border-color:#ddd6fe;}
+.canal-dd.Otro{background:#f8fafc;color:#475569;}
+
+/* Fecha / notas / inputs */
+.finp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.74rem;background:#f8fafc;width:118px;}
 .finp:focus{outline:none;border-color:#1a3c5e;}
-.ninp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 7px;font-size:.76rem;background:#f8fafc;width:155px;}
+.ninp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.74rem;background:#f8fafc;width:140px;}
 .ninp:focus{outline:none;border-color:#1a3c5e;}
+.ainp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.74rem;background:#f8fafc;width:120px;}
+.ainp:focus{outline:none;border-color:#1a3c5e;}
+.minp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.74rem;background:#f8fafc;width:90px;text-align:right;}
+.minp:focus{outline:none;border-color:#15803d;}
+.rinp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.74rem;background:#f8fafc;width:110px;}
+.rinp:focus{outline:none;border-color:#1a3c5e;}
 
 /* Tags */
 .tag{display:inline-block;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;}
 .t-mora{background:#fecaca;color:#991b1b;}
 .t-ok{background:#dbeafe;color:#1e40af;}
+.dep-badge{display:inline-block;background:#e0f2fe;color:#0369a1;border-radius:10px;padding:1px 6px;font-size:.64rem;font-weight:700;margin-left:4px;}
+.vid-lbl{font-size:.65rem;color:#94a3b8;font-weight:600;letter-spacing:.3px;}
 
 /* Paginación */
 .pagbar{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:#f8fafc;border-top:1px solid #e2e8f0;font-size:.78rem;color:#64748b;}
@@ -111,24 +178,164 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 <!-- KPIs -->
 <div class="kpi-bar">
   <div class="kpi-box">
-    <div class="kpi-num" style="color:#1a3c5e" id="k-total">5,211</div>
+    <div class="kpi-num" style="color:#1a3c5e" id="k-total">—</div>
     <div class="kpi-lbl">Total suscripciones</div>
     <div class="kpi-sub">base completa</div>
   </div>
   <div class="kpi-box">
-    <div class="kpi-num" style="color:#15803d" id="k-tok">2,973</div>
+    <div class="kpi-num" style="color:#15803d" id="k-tok">—</div>
     <div class="kpi-lbl">Con tarjeta tokenizada</div>
     <div class="kpi-sub">cobro automático ✓</div>
   </div>
   <div class="kpi-box">
-    <div class="kpi-num" style="color:#1a3c5e" id="k-pct">57.0%</div>
+    <div class="kpi-num" style="color:#1a3c5e" id="k-pct">—</div>
     <div class="kpi-lbl">% Tokenización</div>
-    <div class="pct-bar"><div class="pct-fill" id="k-bar" style="width:57%;background:#15803d"></div></div>
+    <div class="pct-bar"><div class="pct-fill" id="k-bar" style="width:0%;background:#15803d"></div></div>
   </div>
   <div class="kpi-box">
-    <div class="kpi-num" style="color:#dc2626" id="k-sin">2,238</div>
+    <div class="kpi-num" style="color:#dc2626" id="k-sin">—</div>
     <div class="kpi-lbl">Sin tarjeta — hay que llamar</div>
     <div class="kpi-sub" id="k-sin-sub">gestión call center</div>
+  </div>
+</div>
+
+<!-- ══ PANEL RENDIMIENTO CALL CENTER ══ -->
+<div class="perf-panel">
+  <div class="perf-header">
+    <span><i class="fas fa-headset me-2"></i>Rendimiento Call Center</span>
+    <button class="perf-cfg-btn" onclick="toggleCfg()"><i class="fas fa-sliders me-1"></i>Configurar metas</button>
+  </div>
+
+  <div class="cfg-panel d-none" id="cfgPanel">
+    <div class="cfg-row">
+      <div class="cfg-team cas">
+        <strong>🎯 CAS — Metas</strong>
+        <label>Llamadas asignadas <input type="number" id="cfg-cas-ll" value="440" min="0" onchange="guardarCfg()"></label>
+        <label>Meta renovaciones  <input type="number" id="cfg-cas-rv" value="88"  min="0" onchange="guardarCfg()"></label>
+      </div>
+      <div class="cfg-team clin">
+        <strong>🏥 Clínica — Metas</strong>
+        <label>Llamadas asignadas <input type="number" id="cfg-clin-ll" value="189" min="0" onchange="guardarCfg()"></label>
+        <label>Meta renovaciones  <input type="number" id="cfg-clin-rv" value="38"  min="0" onchange="guardarCfg()"></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="perf-grid">
+    <div class="pkpi-card">
+      <div class="pkpi-title">📞 Llamadas realizadas</div>
+      <div class="pkpi-teams">
+        <div class="pkpi-team cas">
+          <div class="pkpi-label">CAS</div>
+          <div class="pkpi-val" id="p-cas-ll-val">0</div>
+          <div class="pkpi-meta" id="p-cas-ll-meta">/ 440</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg cas-color" id="p-cas-ll-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-cas-ll" placeholder="0" min="0" oninput="actualizarKPIs()">
+        </div>
+        <div class="pkpi-divider"></div>
+        <div class="pkpi-team clin">
+          <div class="pkpi-label">Clínica</div>
+          <div class="pkpi-val" id="p-clin-ll-val">0</div>
+          <div class="pkpi-meta" id="p-clin-ll-meta">/ 189</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg clin-color" id="p-clin-ll-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-clin-ll" placeholder="0" min="0" oninput="actualizarKPIs()">
+        </div>
+      </div>
+    </div>
+
+    <div class="pkpi-card">
+      <div class="pkpi-title">🤝 % Contactabilidad</div>
+      <div class="pkpi-teams">
+        <div class="pkpi-team cas">
+          <div class="pkpi-label">CAS</div>
+          <div class="pkpi-val" id="p-cas-cp-val">0%</div>
+          <div class="pkpi-meta">meta 70%</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg cas-color" id="p-cas-cp-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-cas-cp" placeholder="0" min="0" max="100" oninput="actualizarKPIs()">
+          <span class="pkpi-pct-lbl">% contactados</span>
+        </div>
+        <div class="pkpi-divider"></div>
+        <div class="pkpi-team clin">
+          <div class="pkpi-label">Clínica</div>
+          <div class="pkpi-val" id="p-clin-cp-val">0%</div>
+          <div class="pkpi-meta">meta 70%</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg clin-color" id="p-clin-cp-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-clin-cp" placeholder="0" min="0" max="100" oninput="actualizarKPIs()">
+          <span class="pkpi-pct-lbl">% contactados</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pkpi-card">
+      <div class="pkpi-title">✅ Renovaciones logradas</div>
+      <div class="pkpi-teams">
+        <div class="pkpi-team cas">
+          <div class="pkpi-label">CAS</div>
+          <div class="pkpi-val" id="p-cas-rv-val">0</div>
+          <div class="pkpi-meta" id="p-cas-rv-meta">/ 88</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg cas-color" id="p-cas-rv-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-cas-rv" placeholder="0" min="0" oninput="actualizarKPIs()">
+        </div>
+        <div class="pkpi-divider"></div>
+        <div class="pkpi-team clin">
+          <div class="pkpi-label">Clínica</div>
+          <div class="pkpi-val" id="p-clin-rv-val">0</div>
+          <div class="pkpi-meta" id="p-clin-rv-meta">/ 38</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg clin-color" id="p-clin-rv-bar" style="width:0%"></div></div>
+          <input type="number" class="pkpi-input" id="i-clin-rv" placeholder="0" min="0" oninput="actualizarKPIs()">
+        </div>
+      </div>
+    </div>
+
+    <div class="pkpi-card highlight-card">
+      <div class="pkpi-title">🎯 % Conversión (renovó / contactado)</div>
+      <div class="pkpi-teams">
+        <div class="pkpi-team cas">
+          <div class="pkpi-label">CAS</div>
+          <div class="pkpi-val big-val" id="p-cas-conv">0%</div>
+          <div class="pkpi-meta">meta 40%</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg cas-color" id="p-cas-conv-bar" style="width:0%"></div></div>
+          <div class="pkpi-estado" id="p-cas-conv-est">Sin datos</div>
+        </div>
+        <div class="pkpi-divider"></div>
+        <div class="pkpi-team clin">
+          <div class="pkpi-label">Clínica</div>
+          <div class="pkpi-val big-val" id="p-clin-conv">0%</div>
+          <div class="pkpi-meta">meta 40%</div>
+          <div class="pkpi-bar-bg"><div class="pkpi-bar-fg clin-color" id="p-clin-conv-bar" style="width:0%"></div></div>
+          <div class="pkpi-estado" id="p-clin-conv-est">Sin datos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MÉTRICAS POR CANAL ══ -->
+<div class="canal-panel">
+  <div class="canal-header" onclick="toggleCanal()">
+    <span><i class="fas fa-chart-bar me-2"></i>Métricas por Canal de Renovación</span>
+    <span id="canal-toggle-ico"><i class="fas fa-chevron-down"></i></span>
+  </div>
+  <div class="canal-body d-none" id="canalBody">
+    <div style="overflow-x:auto">
+      <table class="canal-table">
+        <thead>
+          <tr>
+            <th>Canal</th>
+            <th>Responsable más activo</th>
+            <th style="text-align:right">Gestiones</th>
+            <th style="text-align:right">Renovados</th>
+            <th style="text-align:right">% Conversión</th>
+            <th style="text-align:right">Monto gestionado Q</th>
+            <th style="text-align:right">Monto renovado Q</th>
+          </tr>
+        </thead>
+        <tbody id="canalMetricasBody"></tbody>
+      </table>
+    </div>
+    <div style="font-size:.72rem;color:#94a3b8;padding:8px 0 0">
+      * Las métricas se calculan automáticamente desde los estados de gestión registrados en el CRM.
+    </div>
   </div>
 </div>
 
@@ -136,11 +343,11 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 <div class="tab-row">
   <button class="tab-btn active crm" id="tab-crm" onclick="setTab('crm')">
     <i class="fas fa-phone me-1"></i>Gestión CRM — Hay que llamar
-    <span class="cnt-badge" id="b-crm" style="background:#dc2626;color:#fff">2,238</span>
+    <span class="cnt-badge" id="b-crm" style="background:#dc2626;color:#fff">—</span>
   </button>
   <button class="tab-btn tok" id="tab-tok" onclick="setTab('tok')">
     <i class="fas fa-credit-card me-1"></i>Cobro automático — Con tarjeta
-    <span class="cnt-badge" id="b-tok" style="background:#15803d;color:#fff">2,973</span>
+    <span class="cnt-badge" id="b-tok" style="background:#15803d;color:#fff">—</span>
   </button>
 </div>
 
@@ -152,16 +359,15 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
       <i class="fas fa-phone-volume fa-lg mt-1"></i>
       <div>
         <strong>Usuarios SIN tarjeta tokenizada</strong> — Requieren llamada para gestionar la renovación o tokenización de tarjeta.<br>
-        <span style="font-size:.8rem">Registra cada intento: <strong>1er intento → 2do intento → Renovado / No renueva</strong>. La fecha queda guardada para seguimiento.</span>
+        <span style="font-size:.8rem">Registra cada intento: <strong>1er intento → 2do intento → Renovado / No renueva</strong>. Asigna responsable y canal para medir productividad.</span>
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="stats-row" id="crmStats"></div>
 
-    <!-- Filtros -->
+    <!-- Filtros CRM -->
     <div class="fbar">
-      <input type="text" id="crmQ" placeholder="🔍 Nombre, teléfono, email..." oninput="renderCRM()" style="min-width:210px">
+      <input type="text" id="crmQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderCRM()" style="min-width:200px">
       <select id="crmEst" onchange="renderCRM()">
         <option value="">Todos los estados</option>
         <option value="pendiente">🔘 Pendiente</option>
@@ -175,12 +381,25 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
         <option value="Vivolife Silver">Vivolife Silver</option>
         <option value="Vivolife">Vivolife</option>
         <option value="Vivolife Plus">Vivolife Plus</option>
+        <option value="Vivolife+Gruas">Vivolife+Gruas</option>
       </select>
       <select id="crmMora" onchange="renderCRM()">
         <option value="">Todos</option>
         <option value="mora">🔴 Solo en mora</option>
         <option value="proximo">🟡 Próximos a vencer (≤60d)</option>
         <option value="activo">🟢 Solo activos</option>
+      </select>
+      <select id="crmCanal" onchange="renderCRM()">
+        <option value="">Todos los canales</option>
+        <option value="CAS">CAS</option>
+        <option value="Clinica">Clínica</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Presencial">Presencial</option>
+        <option value="Digital">Digital</option>
+        <option value="Otro">Otro</option>
+      </select>
+      <select id="crmResp" onchange="renderCRM()">
+        <option value="">Todos los responsables</option>
       </select>
       <button class="pbtn ms-auto" onclick="limpiarCRM()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
       <span id="crmCnt" style="font-size:.75rem;color:#64748b"></span>
@@ -191,18 +410,22 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
         <table>
           <thead>
             <tr>
-              <th style="width:32px"><input type="checkbox" id="chkAll" onchange="selAll()"></th>
+              <th style="width:28px"><input type="checkbox" id="chkAll" onchange="selAll()"></th>
               <th>#</th>
-              <th>Nombre completo</th>
+              <th>Nombre / Vivo ID</th>
               <th>Teléfono</th>
               <th>Plan</th>
               <th>Vencimiento</th>
               <th>Días</th>
               <th>Estado gestión</th>
+              <th>Responsable</th>
+              <th>Canal</th>
               <th>Fecha 1er intento</th>
               <th>Fecha 2do intento</th>
+              <th>Autorización / Voucher</th>
               <th>Notas</th>
-              <th class="text-end">Monto Q</th>
+              <th class="text-end">Monto Real Q</th>
+              <th class="text-end">Monto Plan Q</th>
               <th class="text-end">Comisión Q</th>
             </tr>
           </thead>
@@ -230,12 +453,13 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
     </div>
 
     <div class="fbar">
-      <input type="text" id="tokQ" placeholder="🔍 Nombre, teléfono..." oninput="renderTok()" style="min-width:210px">
+      <input type="text" id="tokQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderTok()" style="min-width:200px">
       <select id="tokPlan" onchange="renderTok()">
         <option value="">Todos los planes</option>
         <option value="Vivolife Silver">Vivolife Silver</option>
         <option value="Vivolife">Vivolife</option>
         <option value="Vivolife Plus">Vivolife Plus</option>
+        <option value="Vivolife+Gruas">Vivolife+Gruas</option>
       </select>
       <select id="tokMora" onchange="renderTok()">
         <option value="">Todos</option>
@@ -253,14 +477,16 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
           <thead class="green-head">
             <tr>
               <th>#</th>
-              <th>Nombre completo</th>
+              <th>Nombre / Vivo ID</th>
               <th>Teléfono</th>
               <th>Email</th>
               <th>Plan</th>
+              <th>Dependientes</th>
               <th>Vencimiento</th>
               <th>Días</th>
               <th>Último pago</th>
-              <th class="text-end">Monto Q</th>
+              <th class="text-end">Monto Plan Q</th>
+              <th class="text-end">Valor Total Q</th>
             </tr>
           </thead>
           <tbody id="tokBody"></tbody>
@@ -278,6 +504,15 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 
 </div><!-- /content -->
 
+<!-- datalist para responsables -->
+<datalist id="dl-resp">
+  <option value="Sylvia Aguilar">
+  <option value="María García">
+  <option value="Carlos López">
+  <option value="Andrea Martínez">
+  <option value="Roberto Pérez">
+</datalist>
+
 <script src="datos.js"></script>
 <script>
 // ════════════════════════════════════════
@@ -289,6 +524,8 @@ const PER=50;
 let crmFilt=[], tokFilt=[];
 const hoy = new Date(); hoy.setHours(0,0,0,0);
 
+const CANALES = ['CAS','Clinica','WhatsApp','Presencial','Digital','Otro'];
+
 // ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
@@ -299,12 +536,10 @@ function init() {
     sinTok = window.SIN_TOKEN;
     conTok = window.CON_TOKEN || [];
   } else {
-    // muestra mínima si no hay datos
-    sinTok = [{id:1,c:"Sin datos — sube datos.js",t:"",e:"",p:"Vivolife",v:"",s:"active",m:0,com:0,u:""}];
+    sinTok = [{id:1,vid:'',c:"Sin datos — sube datos.js",t:"",e:"",p:"Vivolife",v:"",s:"activo",m:0,vadd:0,dep:0,vtot:0,com:0,u:""}];
     conTok = [];
   }
 
-  // Ordenar: 1º mora (más vencida primero), 2º próximos (fecha más cercana), 3º activos
   sinTok.sort((a,b)=>{
     const ord = s => s==='mora'?0 : s==='proximo'?1 : 2;
     if (ord(a.s) !== ord(b.s)) return ord(a.s) - ord(b.s);
@@ -312,24 +547,37 @@ function init() {
   });
   conTok.sort((a,b)=> getDias(a.v)-getDias(b.v));
 
-  // KPIs reales
   const total = sinTok.length + conTok.length;
   const pct   = total ? (conTok.length/total*100).toFixed(1) : 0;
   const moraS = sinTok.filter(r=>esMora(r)).length;
-  const moraC = conTok.filter(r=>esMora(r)).length;
+  const proxS = sinTok.filter(r=>esProx(r)).length;
 
   document.getElementById('k-total').textContent = total.toLocaleString('es-GT');
   document.getElementById('k-tok').textContent   = conTok.length.toLocaleString('es-GT');
   document.getElementById('k-pct').textContent   = pct + '%';
   document.getElementById('k-bar').style.width   = pct + '%';
   document.getElementById('k-sin').textContent   = sinTok.length.toLocaleString('es-GT');
-  const proxS = sinTok.filter(r=>esProx(r)).length;
-  document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${proxS} próximos a vencer`;
+  document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${proxS} próximos`;
   document.getElementById('b-crm').textContent   = sinTok.length.toLocaleString('es-GT');
   document.getElementById('b-tok').textContent   = conTok.length.toLocaleString('es-GT');
 
+  // Build responsables list
+  buildRespList();
   startClock();
   renderAll();
+}
+
+function buildRespList(){
+  const set = new Set();
+  Object.values(gestion).forEach(g=>{if(g.resp&&g.resp.trim()) set.add(g.resp.trim());});
+  const sel = document.getElementById('crmResp');
+  // keep first option
+  while(sel.options.length > 1) sel.remove(1);
+  [...set].sort().forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r; o.textContent=r;
+    sel.appendChild(o);
+  });
 }
 
 function startClock(){
@@ -345,7 +593,7 @@ function startClock(){
 const getDias = v => { try{return Math.ceil((new Date(v+'T00:00:00')-hoy)/86400000);}catch{return 9999;} };
 const esMora  = r => r.s==='mora' || getDias(r.v)<0;
 const esProx  = r => r.s==='proximo' && getDias(r.v)>=0;
-const fmtQ    = n => 'Q '+(n||0).toLocaleString('es-GT');
+const fmtQ    = n => 'Q '+(parseFloat(n)||0).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDate = v => { try{return new Date(v+'T00:00:00').toLocaleDateString('es-GT');}catch{return v||'—';} };
 
 function diasTxt(r){
@@ -357,11 +605,11 @@ function diasTxt(r){
   return `<span style="color:#64748b">${d}d</span>`;
 }
 
-const getG  = id => gestion[id]||{est:'pendiente',f1:'',f2:'',n:''};
+const getG  = id => gestion[id]||{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:''};
 function saveG(id,o){gestion[id]=o;localStorage.setItem('rv9_g',JSON.stringify(gestion));}
 
 // ════════════════════════════════════════
-// TABS
+// TABS / CANAL TOGGLE
 // ════════════════════════════════════════
 function setTab(t){
   ['crm','tok'].forEach(x=>{
@@ -369,6 +617,14 @@ function setTab(t){
     document.getElementById('tab-'+x).classList.toggle(x,true);
     document.getElementById('panel-'+x).classList.toggle('d-none',x!==t);
   });
+}
+
+function toggleCanal(){
+  const b=document.getElementById('canalBody');
+  const ico=document.getElementById('canal-toggle-ico');
+  const hidden=b.classList.toggle('d-none');
+  ico.innerHTML=hidden?'<i class="fas fa-chevron-down"></i>':'<i class="fas fa-chevron-up"></i>';
+  if(!hidden) renderCanalMetricas();
 }
 
 // ════════════════════════════════════════
@@ -387,20 +643,80 @@ function renderStats(){
   document.getElementById('crmStats').innerHTML=h;
 }
 
+// ── Canal Metricas ──
+function renderCanalMetricas(){
+  const stats={};
+  CANALES.forEach(c=>{stats[c]={gest:0,renov:0,mgest:0,mrenov:0,resps:{}};});
+  stats['Sin asignar']={gest:0,renov:0,mgest:0,mrenov:0,resps:{}};
+
+  sinTok.forEach(r=>{
+    const g=getG(r.id);
+    const canal=g.canal||'Sin asignar';
+    if(!stats[canal]) stats[canal]={gest:0,renov:0,mgest:0,mrenov:0,resps:{}};
+    // Solo contar si tiene algún estado de gestión activo
+    if(g.est!=='pendiente'){
+      stats[canal].gest++;
+      const vtot = r.vtot||r.m||0;
+      stats[canal].mgest+=vtot;
+      if(g.est==='renovado'){
+        stats[canal].renov++;
+        const mr=parseFloat(g.mreal)||vtot;
+        stats[canal].mrenov+=mr;
+      }
+      if(g.resp&&g.resp.trim()){
+        const rk=g.resp.trim();
+        stats[canal].resps[rk]=(stats[canal].resps[rk]||0)+1;
+      }
+    }
+  });
+
+  const rows=Object.entries(stats)
+    .filter(([,v])=>v.gest>0)
+    .sort((a,b)=>b[1].gest-a[1].gest);
+
+  if(!rows.length){
+    document.getElementById('canalMetricasBody').innerHTML='<tr><td colspan="7" class="text-center py-3" style="color:#94a3b8;font-size:.8rem">Aún no hay gestiones registradas. Empieza asignando canal a los registros del CRM.</td></tr>';
+    return;
+  }
+
+  const totalGest = rows.reduce((s,[,v])=>s+v.gest,0);
+  document.getElementById('canalMetricasBody').innerHTML=rows.map(([canal,v])=>{
+    const conv=v.gest>0?Math.round(v.renov/v.gest*100):0;
+    const pct=totalGest>0?Math.round(v.gest/totalGest*100):0;
+    const topResp=Object.entries(v.resps).sort((a,b)=>b[1]-a[1])[0];
+    const respLbl=topResp?`${topResp[0]} (${topResp[1]})`:'—';
+    const clr=conv>=40?'#15803d':conv>=20?'#d97706':'#dc2626';
+    return `<tr>
+      <td><strong>${canal}</strong><div class="canal-bar"><div class="canal-bar-fg" style="width:${pct}%;background:#1a3c5e"></div></div></td>
+      <td style="font-size:.78rem;color:#475569">${respLbl}</td>
+      <td style="text-align:right;font-weight:700">${v.gest.toLocaleString('es-GT')}</td>
+      <td style="text-align:right;font-weight:700;color:#15803d">${v.renov.toLocaleString('es-GT')}</td>
+      <td style="text-align:right;font-weight:800;color:${clr}">${conv}%</td>
+      <td style="text-align:right;font-size:.78rem;color:#475569">${fmtQ(v.mgest)}</td>
+      <td style="text-align:right;font-weight:700;color:#15803d">${fmtQ(v.mrenov)}</td>
+    </tr>`;
+  }).join('');
+}
+
 // ── CRM ──
 function renderCRM(){
-  const q  = document.getElementById('crmQ').value.toLowerCase();
-  const fe = document.getElementById('crmEst').value;
-  const fp = document.getElementById('crmPlan').value;
-  const fm = document.getElementById('crmMora').value;
+  const q     = document.getElementById('crmQ').value.toLowerCase();
+  const fe    = document.getElementById('crmEst').value;
+  const fp    = document.getElementById('crmPlan').value;
+  const fm    = document.getElementById('crmMora').value;
+  const fcan  = document.getElementById('crmCanal').value;
+  const fresp = document.getElementById('crmResp').value;
 
   crmFilt = sinTok.filter(r=>{
-    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.e||'').toLowerCase().includes(q)) return false;
-    if(fp&&r.p!==fp) return false;
+    if(q && !r.c.toLowerCase().includes(q) && !(r.t||'').includes(q) && !(r.e||'').toLowerCase().includes(q) && !(r.vid||'').toLowerCase().includes(q)) return false;
+    if(fp && r.p!==fp) return false;
     if(fm==='mora'    && !esMora(r))  return false;
     if(fm==='proximo' && !esProx(r))  return false;
     if(fm==='activo'  && (esMora(r)||esProx(r))) return false;
-    if(fe){const g=getG(r.id);if(g.est!==fe)return false;}
+    const g=getG(r.id);
+    if(fe && g.est!==fe) return false;
+    if(fcan && (g.canal||'')!==fcan) return false;
+    if(fresp && (g.resp||'').trim()!==fresp) return false;
     return true;
   });
 
@@ -414,29 +730,36 @@ function renderCRM(){
   document.getElementById('crmNext').disabled=crmPage>=pages;
 
   if(!slice.length){
-    document.getElementById('crmBody').innerHTML='<tr><td colspan="13" class="text-center py-5" style="color:#94a3b8">Sin resultados para los filtros seleccionados</td></tr>';
+    document.getElementById('crmBody').innerHTML='<tr><td colspan="17" class="text-center py-5" style="color:#94a3b8">Sin resultados para los filtros seleccionados</td></tr>';
     return;
   }
 
   const opts=[['pendiente','🔘 Pendiente'],['primer_intento','📞 1er intento'],['segundo_intento','📞📞 2do intento'],['renovado','✅ Renovado'],['no_renueva','❌ No renueva']];
+  const canalOpts=[['','— Canal —'],['CAS','CAS'],['Clinica','Clínica'],['WhatsApp','WhatsApp'],['Presencial','Presencial'],['Digital','Digital'],['Otro','Otro']];
 
   document.getElementById('crmBody').innerHTML=slice.map((r,i)=>{
     const g=getG(r.id);
     const mora=esMora(r);
     const rowCls=g.est==='renovado'?'done-row':mora?'mora-row':'';
     const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
-    // Mostrar fecha2 solo si ya hizo 1er intento
+    const canalSel=canalOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
     const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
+    const vtot=r.vtot||r.m||0;
+    const depBadge=r.dep>0?`<span class="dep-badge">+${r.dep} dep.</span>`:'';
+    const canalCls=(g.canal||'').replace(/\s/g,'');
+    const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
+
     return `<tr class="${rowCls}" id="r${r.id}">
       <td><input type="checkbox" class="crm-chk" value="${r.id}"></td>
       <td style="color:#94a3b8;font-size:.72rem">${start+i+1}</td>
       <td>
-        <div style="font-weight:700;font-size:.86rem">${r.c}</div>
-        ${mora?'<span style="font-size:.68rem;color:#dc2626;font-weight:700">⚠ EN MORA</span>':''}
+        <div style="font-weight:700;font-size:.85rem">${r.c}${depBadge}</div>
+        <div class="vid-lbl"><i class="fas fa-id-badge me-1" style="color:#94a3b8"></i>${r.vid||'—'}</div>
+        ${mora?'<span style="font-size:.67rem;color:#dc2626;font-weight:700">⚠ EN MORA</span>':''}
       </td>
-      <td style="font-weight:800;font-size:.9rem;letter-spacing:.3px;color:#1a3c5e">${r.t||'—'}</td>
-      <td style="font-size:.77rem;color:#475569">${r.p}</td>
-      <td style="white-space:nowrap;font-size:.8rem">${fmtDate(r.v)}</td>
+      <td style="font-weight:800;font-size:.88rem;letter-spacing:.3px;color:#1a3c5e">${r.t||'—'}</td>
+      <td style="font-size:.76rem;color:#475569">${r.p}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${fmtDate(r.v)}</td>
       <td style="white-space:nowrap">${diasTxt(r)}</td>
       <td>
         <select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)">
@@ -444,22 +767,41 @@ function renderCRM(){
         </select>
       </td>
       <td>
+        <input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}"
+          placeholder="Responsable..."
+          onchange="chgResp(${r.id},this.value)">
+      </td>
+      <td>
+        <select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)">
+          ${canalSel}
+        </select>
+      </td>
+      <td>
         <input type="date" class="finp" value="${g.f1||''}"
-          onchange="chgFecha(${r.id},'f1',this.value)"
-          title="Fecha 1er intento de contacto">
+          onchange="chgFecha(${r.id},'f1',this.value)">
       </td>
       <td>
         <input type="date" class="finp" value="${g.f2||''}"
           onchange="chgFecha(${r.id},'f2',this.value)"
-          title="Fecha 2do intento / seguimiento"
           ${showF2?'':'style="opacity:.3;pointer-events:none"'}>
+      </td>
+      <td>
+        <input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}"
+          placeholder="No. Autorización..."
+          onchange="chgAuth(${r.id},this.value)">
       </td>
       <td>
         <input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}"
           placeholder="Notas..."
           onchange="chgNota(${r.id},this.value)">
       </td>
-      <td class="text-end" style="font-weight:600;white-space:nowrap">${fmtQ(r.m)}</td>
+      <td class="text-end">
+        <input type="number" class="minp" value="${mrealVal}"
+          title="Monto real de renovación (editable)"
+          onchange="chgMreal(${r.id},this.value)"
+          step="0.01" min="0">
+      </td>
+      <td class="text-end" style="font-weight:600;white-space:nowrap;color:#475569">${fmtQ(r.m)}</td>
       <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(r.com)}</td>
     </tr>`;
   }).join('');
@@ -472,7 +814,7 @@ function renderTok(){
   const fm = document.getElementById('tokMora').value;
 
   tokFilt = conTok.filter(r=>{
-    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)) return false;
+    if(q && !r.c.toLowerCase().includes(q) && !(r.t||'').includes(q) && !(r.vid||'').toLowerCase().includes(q)) return false;
     if(fp&&r.p!==fp) return false;
     if(fm==='mora'    && !esMora(r))  return false;
     if(fm==='proximo' && !esProx(r))  return false;
@@ -490,7 +832,7 @@ function renderTok(){
   document.getElementById('tokNext').disabled=tokPage>=pages;
 
   if(!slice.length){
-    document.getElementById('tokBody').innerHTML='<tr><td colspan="9" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';
+    document.getElementById('tokBody').innerHTML='<tr><td colspan="11" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';
     return;
   }
 
@@ -498,16 +840,23 @@ function renderTok(){
     const d=getDias(r.v);
     const dTxt=esMora(r)?`<span style="color:#dc2626;font-weight:700">${Math.abs(d)}d vencida</span>`:d<=30?`<span style="color:#d97706">${d}d</span>`:`${d}d`;
     const pagOk=(r.u||'').toLowerCase().includes('approved');
+    const depBadge=r.dep>0?`<span class="dep-badge">+${r.dep} dep.</span>`:'';
+    const vtot=r.vtot||r.m||0;
     return `<tr>
       <td style="color:#94a3b8;font-size:.72rem">${start+i+1}</td>
-      <td style="font-weight:600">${r.c}</td>
+      <td>
+        <div style="font-weight:600">${r.c}${depBadge}</div>
+        <div class="vid-lbl"><i class="fas fa-id-badge me-1" style="color:#94a3b8"></i>${r.vid||'—'}</div>
+      </td>
       <td style="font-weight:700;color:#1a3c5e">${r.t||'—'}</td>
-      <td style="font-size:.77rem;color:#64748b">${r.e||'—'}</td>
-      <td style="font-size:.77rem;color:#475569">${r.p}</td>
-      <td style="white-space:nowrap;font-size:.8rem">${fmtDate(r.v)}</td>
+      <td style="font-size:.76rem;color:#64748b">${r.e||'—'}</td>
+      <td style="font-size:.76rem;color:#475569">${r.p}</td>
+      <td style="font-size:.78rem">${r.dep>0?`<span style="color:#0369a1;font-weight:600">${r.dep} adicional${r.dep>1?'es':''}</span>`:'<span style="color:#94a3b8">Solo titular</span>'}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${fmtDate(r.v)}</td>
       <td style="white-space:nowrap">${dTxt}</td>
-      <td style="font-size:.77rem;color:${pagOk?'#15803d':'#dc2626'}">${r.u||'—'}</td>
-      <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(r.m)}</td>
+      <td style="font-size:.76rem;color:${pagOk?'#15803d':'#dc2626'}">${r.u||'—'}</td>
+      <td class="text-end" style="font-weight:600;color:#475569;white-space:nowrap">${fmtQ(r.m)}</td>
+      <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(vtot)}</td>
     </tr>`;
   }).join('');
 }
@@ -518,13 +867,11 @@ function renderTok(){
 function chgEst(id,sel){
   const g=getG(id);
   g.est=sel.value;
-  // Auto fecha 1er intento
   if(g.est==='primer_intento'&&!g.f1){
     g.f1=new Date().toISOString().split('T')[0];
     const row=document.getElementById('r'+id);
     if(row) row.querySelectorAll('.finp')[0].value=g.f1;
   }
-  // Auto fecha 2do intento
   if(g.est==='segundo_intento'&&!g.f2){
     g.f2=new Date().toISOString().split('T')[0];
     const row=document.getElementById('r'+id);
@@ -535,15 +882,45 @@ function chgEst(id,sel){
   const row=document.getElementById('r'+id);
   if(row) row.className=g.est==='renovado'?'done-row':(esMora(sinTok.find(x=>x.id==id)||{})?'mora-row':'');
   renderStats();
+  // refresh canal metrics if open
+  if(!document.getElementById('canalBody').classList.contains('d-none')) renderCanalMetricas();
 }
 
 function chgFecha(id,campo,val){const g=getG(id);g[campo]=val;saveG(id,g);}
 function chgNota(id,val){const g=getG(id);g.n=val;saveG(id,g);}
 
+function chgAuth(id,val){const g=getG(id);g.auth=val;saveG(id,g);}
+
+function chgMreal(id,val){
+  const g=getG(id);
+  g.mreal=val;
+  saveG(id,g);
+}
+
+function chgResp(id,val){
+  const g=getG(id);
+  g.resp=val;
+  saveG(id,g);
+  buildRespList();
+  if(!document.getElementById('canalBody').classList.contains('d-none')) renderCanalMetricas();
+}
+
+function chgCanal(id,sel){
+  const g=getG(id);
+  g.canal=sel.value;
+  saveG(id,g);
+  const cls=(g.canal||'').replace(/\s/g,'');
+  sel.className='canal-dd '+cls;
+  if(!document.getElementById('canalBody').classList.contains('d-none')) renderCanalMetricas();
+}
+
+// ════════════════════════════════════════
+// PAGINACIÓN / FILTROS
+// ════════════════════════════════════════
 function pgCRM(d){crmPage+=d;renderCRM();window.scrollTo(0,300);}
 function pgTok(d){tokPage+=d;renderTok();window.scrollTo(0,300);}
 
-function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora'].forEach(x=>document.getElementById(x).value='');crmPage=1;renderCRM();}
+function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora','crmCanal','crmResp'].forEach(x=>document.getElementById(x).value='');crmPage=1;renderCRM();}
 function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
 function selAll(){const c=document.getElementById('chkAll').checked;document.querySelectorAll('.crm-chk').forEach(x=>x.checked=c);}
 
@@ -551,18 +928,24 @@ function selAll(){const c=document.getElementById('chkAll').checked;document.que
 // EXPORTS
 // ════════════════════════════════════════
 function exportarCRM(){
-  const h=['ID','Nombre','Teléfono','Email','Plan','Vencimiento','Días','Estado','Fecha 1er intento','Fecha 2do intento','Notas','Monto Q','Comisión Q'];
+  const h=['ID','Vivo ID','Nombre','Teléfono','Email','Plan','Dependientes','Valor Total Q','Vencimiento','Días','Estado','Responsable','Canal','Fecha 1er intento','Fecha 2do intento','Autorización/Voucher','Notas','Monto Real Q','Monto Plan Q','Comisión Q'];
   const rows=sinTok.map(r=>{
-    const g=getG(r.id),d=getDias(r.v);
+    const g=getG(r.id);
+    const d=getDias(r.v);
     const dTxt=esMora(r)?`${Math.abs(d)}d vencida`:`${d}d`;
-    return [r.id,r.c,r.t,r.e,r.p,r.v,dTxt,g.est,g.f1,g.f2,g.n,r.m,r.com].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
+    const vtot=r.vtot||r.m||0;
+    const mreal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
+    return [r.id,r.vid||'',r.c,r.t,r.e,r.p,r.dep||0,vtot,r.v,dTxt,g.est,g.resp||'',g.canal||'',g.f1,g.f2,g.auth||'',g.n||'',mreal,r.m,r.com].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
   });
   descargarCSV('crm_sinTokenizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
 }
 
 function exportarTok(){
-  const h=['ID','Nombre','Teléfono','Email','Plan','Vencimiento','Último pago','Monto Q'];
-  const rows=conTok.map(r=>[r.id,r.c,r.t,r.e,r.p,r.v,r.u,r.m].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const h=['ID','Vivo ID','Nombre','Teléfono','Email','Plan','Dependientes','Vencimiento','Último pago','Monto Plan Q','Valor Total Q'];
+  const rows=conTok.map(r=>{
+    const vtot=r.vtot||r.m||0;
+    return [r.id,r.vid||'',r.c,r.t,r.e,r.p,r.dep||0,r.v,r.u,r.m,vtot].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
+  });
   descargarCSV('cobro_automatico_conTokenizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
 }
 
@@ -572,7 +955,94 @@ function descargarCSV(nombre,contenido){
   a.download=nombre; a.click();
 }
 
+// ════════════════════════════════════════
+// RENDIMIENTO CALL CENTER
+// ════════════════════════════════════════
+let perfCfg = JSON.parse(localStorage.getItem('rv9_perf_cfg')||'null') || {
+  casLL:440, casRV:88, clinLL:189, clinRV:38
+};
+let perfData = JSON.parse(localStorage.getItem('rv9_perf_data')||'null') || {
+  casLL:0, casCp:0, casRV:0, clinLL:0, clinCp:0, clinRV:0
+};
+
+function toggleCfg(){ document.getElementById('cfgPanel').classList.toggle('d-none'); }
+
+function guardarCfg(){
+  perfCfg.casLL  = parseInt(document.getElementById('cfg-cas-ll').value)||0;
+  perfCfg.casRV  = parseInt(document.getElementById('cfg-cas-rv').value)||0;
+  perfCfg.clinLL = parseInt(document.getElementById('cfg-clin-ll').value)||0;
+  perfCfg.clinRV = parseInt(document.getElementById('cfg-clin-rv').value)||0;
+  localStorage.setItem('rv9_perf_cfg', JSON.stringify(perfCfg));
+  actualizarKPIs();
+}
+
+function actualizarKPIs(){
+  perfData.casLL  = parseInt(document.getElementById('i-cas-ll').value)||0;
+  perfData.casCp  = parseInt(document.getElementById('i-cas-cp').value)||0;
+  perfData.casRV  = parseInt(document.getElementById('i-cas-rv').value)||0;
+  perfData.clinLL = parseInt(document.getElementById('i-clin-ll').value)||0;
+  perfData.clinCp = parseInt(document.getElementById('i-clin-cp').value)||0;
+  perfData.clinRV = parseInt(document.getElementById('i-clin-rv').value)||0;
+  localStorage.setItem('rv9_perf_data', JSON.stringify(perfData));
+  renderPerf();
+}
+
+function renderPerf(){
+  document.getElementById('cfg-cas-ll').value  = perfCfg.casLL;
+  document.getElementById('cfg-cas-rv').value  = perfCfg.casRV;
+  document.getElementById('cfg-clin-ll').value = perfCfg.clinLL;
+  document.getElementById('cfg-clin-rv').value = perfCfg.clinRV;
+
+  document.getElementById('i-cas-ll').value  = perfData.casLL||'';
+  document.getElementById('i-cas-cp').value  = perfData.casCp||'';
+  document.getElementById('i-cas-rv').value  = perfData.casRV||'';
+  document.getElementById('i-clin-ll').value = perfData.clinLL||'';
+  document.getElementById('i-clin-cp').value = perfData.clinCp||'';
+  document.getElementById('i-clin-rv').value = perfData.clinRV||'';
+
+  const pct = (v,m) => m>0 ? Math.min(100,Math.round(v/m*100)) : 0;
+  const clr = (p,meta) => p>=meta?'#15803d': p>=meta*.6?'#d97706':'#dc2626';
+  const est = (p,meta) => p>=meta?'✅ Meta cumplida': p>0?`⚡ ${p}% de ${meta}%`:'Sin datos aún';
+
+  const pCasLL  = pct(perfData.casLL,  perfCfg.casLL);
+  const pClinLL = pct(perfData.clinLL, perfCfg.clinLL);
+  document.getElementById('p-cas-ll-val').textContent  = perfData.casLL.toLocaleString('es-GT');
+  document.getElementById('p-cas-ll-meta').textContent = `/ ${perfCfg.casLL.toLocaleString('es-GT')}`;
+  document.getElementById('p-cas-ll-bar').style.cssText = `width:${pCasLL}%;background:${clr(pCasLL,100)}`;
+  document.getElementById('p-clin-ll-val').textContent  = perfData.clinLL.toLocaleString('es-GT');
+  document.getElementById('p-clin-ll-meta').textContent = `/ ${perfCfg.clinLL.toLocaleString('es-GT')}`;
+  document.getElementById('p-clin-ll-bar').style.cssText = `width:${pClinLL}%;background:${clr(pClinLL,100)}`;
+
+  document.getElementById('p-cas-cp-val').textContent  = perfData.casCp + '%';
+  document.getElementById('p-cas-cp-bar').style.cssText = `width:${Math.min(100,perfData.casCp/70*100)}%;background:${clr(perfData.casCp,70)}`;
+  document.getElementById('p-clin-cp-val').textContent  = perfData.clinCp + '%';
+  document.getElementById('p-clin-cp-bar').style.cssText = `width:${Math.min(100,perfData.clinCp/70*100)}%;background:${clr(perfData.clinCp,70)}`;
+
+  const pCasRV  = pct(perfData.casRV,  perfCfg.casRV);
+  const pClinRV = pct(perfData.clinRV, perfCfg.clinRV);
+  document.getElementById('p-cas-rv-val').textContent  = perfData.casRV.toLocaleString('es-GT');
+  document.getElementById('p-cas-rv-meta').textContent = `/ ${perfCfg.casRV.toLocaleString('es-GT')}`;
+  document.getElementById('p-cas-rv-bar').style.cssText = `width:${pCasRV}%;background:${clr(pCasRV,100)}`;
+  document.getElementById('p-clin-rv-val').textContent  = perfData.clinRV.toLocaleString('es-GT');
+  document.getElementById('p-clin-rv-meta').textContent = `/ ${perfCfg.clinRV.toLocaleString('es-GT')}`;
+  document.getElementById('p-clin-rv-bar').style.cssText = `width:${pClinRV}%;background:${clr(pClinRV,100)}`;
+
+  const casC  = perfData.casLL  > 0 ? Math.round(perfData.casLL  * perfData.casCp  / 100) : 0;
+  const clinC = perfData.clinLL > 0 ? Math.round(perfData.clinLL * perfData.clinCp / 100) : 0;
+  const casConv  = casC  > 0 ? Math.round(perfData.casRV  / casC  * 100) : 0;
+  const clinConv = clinC > 0 ? Math.round(perfData.clinRV / clinC * 100) : 0;
+  document.getElementById('p-cas-conv').textContent       = casConv + '%';
+  document.getElementById('p-cas-conv-bar').style.cssText = `width:${Math.min(100,casConv/40*100)}%;background:${clr(casConv,40)}`;
+  document.getElementById('p-cas-conv-est').textContent   = est(casConv, 40);
+  document.getElementById('p-cas-conv-est').style.color   = clr(casConv, 40);
+  document.getElementById('p-clin-conv').textContent      = clinConv + '%';
+  document.getElementById('p-clin-conv-bar').style.cssText= `width:${Math.min(100,clinConv/40*100)}%;background:${clr(clinConv,40)}`;
+  document.getElementById('p-clin-conv-est').textContent  = est(clinConv, 40);
+  document.getElementById('p-clin-conv-est').style.color  = clr(clinConv, 40);
+}
+
 init();
+renderPerf();
 </script>
 </body>
 </html>
