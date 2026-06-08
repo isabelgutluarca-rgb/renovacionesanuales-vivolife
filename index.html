@@ -66,7 +66,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;fo
 .clock{font-size:.8rem;background:rgba(255,255,255,.13);border-radius:20px;padding:5px 14px;}
 
 /* KPI bar */
-.kpi-bar{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-bottom:3px solid #e2e8f0;}
+.kpi-bar{display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-bottom:3px solid #e2e8f0;}
 .kpi-box{padding:16px 20px;border-right:1px solid #e2e8f0;text-align:center;}
 .kpi-box:last-child{border-right:none;}
 .kpi-num{font-size:2rem;font-weight:900;line-height:1;}
@@ -80,6 +80,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;fo
 .tab-btn{padding:11px 20px;border:none;background:none;font-weight:700;font-size:.84rem;color:#64748b;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;transition:.12s;}
 .tab-btn.active.crm{color:#dc2626;border-bottom-color:#dc2626;}
 .tab-btn.active.tok{color:#15803d;border-bottom-color:#15803d;}
+.tab-btn.active.texp{color:#c2410c;border-bottom-color:#c2410c;}
 .cnt-badge{display:inline-block;border-radius:20px;padding:1px 8px;font-size:.65rem;font-weight:700;margin-left:6px;}
 
 /* Content */
@@ -156,8 +157,15 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 .ebtn{background:#1a3c5e;color:#fff;border:none;border-radius:7px;padding:7px 15px;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;}
 .ebtn:hover{background:#15304e;}
 .ebtn.green{background:#15803d;} .ebtn.green:hover{background:#166534;}
+.ebtn.orange{background:#c2410c;} .ebtn.orange:hover{background:#9a3412;}
+
+/* Tarjeta expiring */
+tbody tr.texp-row td{background:#fff7ed;}
+.t-texp{background:#fed7aa;color:#9a3412;}
+.t-texp-ok{background:#d1fae5;color:#065f46;}
 
 @media(max-width:768px){.kpi-bar{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.kpi-bar{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -196,6 +204,11 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
     <div class="kpi-num" style="color:#dc2626" id="k-sin">—</div>
     <div class="kpi-lbl">Sin tarjeta — hay que llamar</div>
     <div class="kpi-sub" id="k-sin-sub">gestión call center</div>
+  </div>
+  <div class="kpi-box" style="background:#fff7ed">
+    <div class="kpi-num" style="color:#c2410c" id="k-texp">—</div>
+    <div class="kpi-lbl" style="color:#c2410c">💳 Tarjetas vencidas / por vencer</div>
+    <div class="kpi-sub" id="k-texp-sub">actualizar datos de pago</div>
   </div>
 </div>
 
@@ -348,6 +361,10 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
   <button class="tab-btn tok" id="tab-tok" onclick="setTab('tok')">
     <i class="fas fa-credit-card me-1"></i>Cobro automático — Con tarjeta
     <span class="cnt-badge" id="b-tok" style="background:#15803d;color:#fff">—</span>
+  </button>
+  <button class="tab-btn texp" id="tab-texp" onclick="setTab('texp')">
+    <i class="fas fa-triangle-exclamation me-1"></i>Tarjetas por actualizar
+    <span class="cnt-badge" id="b-texp" style="background:#c2410c;color:#fff">—</span>
   </button>
 </div>
 
@@ -502,6 +519,80 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
     </div>
   </div>
 
+  <!-- ══ TAB TARJETAS POR ACTUALIZAR ══ -->
+  <div id="panel-texp" class="d-none">
+    <div class="banner" style="background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;">
+      <i class="fas fa-credit-card fa-lg mt-1"></i>
+      <div>
+        <strong>Clientes CON tarjeta tokenizada cuya tarjeta está vencida o vence pronto</strong> — El cobro automático <strong>fallará</strong> si no se actualiza.<br>
+        <span style="font-size:.8rem">Llama a estos clientes para que actualicen su tarjeta antes del próximo cobro. Filtra por urgencia: vencida (rojo) o próxima a vencer en ≤30 días (naranja).</span>
+      </div>
+    </div>
+
+    <div class="fbar">
+      <input type="text" id="texpQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderTexp()" style="min-width:200px">
+      <select id="texpPlan" onchange="renderTexp()">
+        <option value="">Todos los planes</option>
+        <option value="Vivolife Silver">Vivolife Silver</option>
+        <option value="Vivolife">Vivolife</option>
+        <option value="Vivolife Plus">Vivolife Plus</option>
+        <option value="Vivolife+Gruas">Vivolife+Gruas</option>
+      </select>
+      <select id="texpUrgencia" onchange="renderTexp()">
+        <option value="">Todos</option>
+        <option value="vencida">🔴 Tarjeta ya vencida</option>
+        <option value="critica">🟠 Vence en ≤15 días</option>
+        <option value="proxima">🟡 Vence en ≤30 días</option>
+      </select>
+      <select id="texpEst" onchange="renderTexp()">
+        <option value="">Todos los estados</option>
+        <option value="pendiente">🔘 Pendiente</option>
+        <option value="primer_intento">📞 1er intento</option>
+        <option value="segundo_intento">📞📞 2do intento</option>
+        <option value="renovado">✅ Tarjeta actualizada</option>
+        <option value="no_renueva">❌ No actualiza</option>
+      </select>
+      <button class="pbtn ms-auto" onclick="limpiarTexp()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
+      <button class="ebtn orange ms-1" onclick="exportarTexp()"><i class="fas fa-download"></i> Exportar</button>
+      <span id="texpCnt" style="font-size:.75rem;color:#64748b"></span>
+    </div>
+
+    <div class="twrap">
+      <div style="overflow-x:auto">
+        <table>
+          <thead style="background:#9a3412;">
+            <tr>
+              <th>#</th>
+              <th>Nombre / Vivo ID</th>
+              <th>Teléfono</th>
+              <th>Plan</th>
+              <th>Dependientes</th>
+              <th>Venc. suscripción</th>
+              <th>💳 Venc. tarjeta</th>
+              <th>Urgencia</th>
+              <th>Estado gestión</th>
+              <th>Responsable</th>
+              <th>Canal</th>
+              <th>Fecha 1er intento</th>
+              <th>Fecha 2do intento</th>
+              <th>Autorización</th>
+              <th>Notas</th>
+              <th class="text-end">Valor Total Q</th>
+            </tr>
+          </thead>
+          <tbody id="texpBody"></tbody>
+        </table>
+      </div>
+      <div class="pagbar">
+        <span id="texpPag">—</span>
+        <div class="d-flex gap-2">
+          <button class="pbtn" id="texpPrev" onclick="pgTexp(-1)">◀ Anterior</button>
+          <button class="pbtn" id="texpNext" onclick="pgTexp(1)">Siguiente ▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /content -->
 
 <!-- datalist para responsables -->
@@ -518,10 +609,11 @@ tbody tr.done-row td{background:#f0fdf4;opacity:.85;}
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
-let sinTok=[], conTok=[], gestion={};
-let crmPage=1, tokPage=1;
+let sinTok=[], conTok=[], texpList=[], gestion={};
+let crmPage=1, tokPage=1, texpPage=1;
 const PER=50;
-let crmFilt=[], tokFilt=[];
+let crmFilt=[], tokFilt=[], texpFilt=[];
+const TEXP_DIAS_ALERTA = 45; // mostrar tarjetas que vencen en ≤45 días o ya vencidas
 const hoy = new Date(); hoy.setHours(0,0,0,0);
 
 const CANALES = ['CAS','Clinica','WhatsApp','Presencial','Digital','Otro'];
@@ -547,10 +639,15 @@ function init() {
   });
   conTok.sort((a,b)=> getDias(a.v)-getDias(b.v));
 
+  // Tarjetas por vencer: clientes tokenizados cuya tarjeta vence en ≤TEXP_DIAS_ALERTA días o ya venció
+  texpList = conTok.filter(r => (r.texpd !== undefined ? r.texpd : 9999) <= TEXP_DIAS_ALERTA)
+    .sort((a,b)=> (a.texpd||9999) - (b.texpd||9999));
+
   const total = sinTok.length + conTok.length;
   const pct   = total ? (conTok.length/total*100).toFixed(1) : 0;
   const moraS = sinTok.filter(r=>esMora(r)).length;
   const proxS = sinTok.filter(r=>esProx(r)).length;
+  const texpVencidas = texpList.filter(r=>(r.texpd||9999)<0).length;
 
   document.getElementById('k-total').textContent = total.toLocaleString('es-GT');
   document.getElementById('k-tok').textContent   = conTok.length.toLocaleString('es-GT');
@@ -558,8 +655,11 @@ function init() {
   document.getElementById('k-bar').style.width   = pct + '%';
   document.getElementById('k-sin').textContent   = sinTok.length.toLocaleString('es-GT');
   document.getElementById('k-sin-sub').textContent = `${moraS} en mora · ${proxS} próximos`;
+  document.getElementById('k-texp').textContent  = texpList.length.toLocaleString('es-GT');
+  document.getElementById('k-texp-sub').textContent = `${texpVencidas} ya vencidas · ${texpList.length-texpVencidas} próx. ≤45d`;
   document.getElementById('b-crm').textContent   = sinTok.length.toLocaleString('es-GT');
   document.getElementById('b-tok').textContent   = conTok.length.toLocaleString('es-GT');
+  document.getElementById('b-texp').textContent  = texpList.length.toLocaleString('es-GT');
 
   // Build responsables list
   buildRespList();
@@ -612,7 +712,7 @@ function saveG(id,o){gestion[id]=o;localStorage.setItem('rv9_g',JSON.stringify(g
 // TABS / CANAL TOGGLE
 // ════════════════════════════════════════
 function setTab(t){
-  ['crm','tok'].forEach(x=>{
+  ['crm','tok','texp'].forEach(x=>{
     document.getElementById('tab-'+x).classList.toggle('active',x===t);
     document.getElementById('tab-'+x).classList.toggle(x,true);
     document.getElementById('panel-'+x).classList.toggle('d-none',x!==t);
@@ -630,7 +730,7 @@ function toggleCanal(){
 // ════════════════════════════════════════
 // RENDER
 // ════════════════════════════════════════
-function renderAll(){renderStats();renderCRM();renderTok();}
+function renderAll(){renderStats();renderCRM();renderTok();renderTexp();}
 
 function renderStats(){
   const labs={pendiente:['🔘','pend','Pendiente'],primer_intento:['📞','llam','1er intento'],segundo_intento:['📞📞','seg','2do intento'],renovado:['✅','renov','Renovado'],no_renueva:['❌','norec','No renueva']};
@@ -919,10 +1019,142 @@ function chgCanal(id,sel){
 // ════════════════════════════════════════
 function pgCRM(d){crmPage+=d;renderCRM();window.scrollTo(0,300);}
 function pgTok(d){tokPage+=d;renderTok();window.scrollTo(0,300);}
+function pgTexp(d){texpPage+=d;renderTexp();window.scrollTo(0,300);}
 
 function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora','crmCanal','crmResp'].forEach(x=>document.getElementById(x).value='');crmPage=1;renderCRM();}
 function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
+function limpiarTexp(){['texpQ','texpPlan','texpUrgencia','texpEst'].forEach(x=>document.getElementById(x).value='');texpPage=1;renderTexp();}
 function selAll(){const c=document.getElementById('chkAll').checked;document.querySelectorAll('.crm-chk').forEach(x=>x.checked=c);}
+
+// ── Tarjetas por actualizar ──
+function renderTexp(){
+  const q   = document.getElementById('texpQ').value.toLowerCase();
+  const fp  = document.getElementById('texpPlan').value;
+  const fu  = document.getElementById('texpUrgencia').value;
+  const fe  = document.getElementById('texpEst').value;
+
+  texpFilt = texpList.filter(r=>{
+    if(q && !r.c.toLowerCase().includes(q) && !(r.t||'').includes(q) && !(r.vid||'').toLowerCase().includes(q)) return false;
+    if(fp && r.p!==fp) return false;
+    const td=r.texpd||9999;
+    if(fu==='vencida'  && td>=0)  return false;
+    if(fu==='critica'  && (td<0||td>15))  return false;
+    if(fu==='proxima'  && (td<0||td>30))  return false;
+    const g=getG('texp_'+r.id);
+    if(fe && g.est!==fe) return false;
+    return true;
+  });
+
+  const total=texpFilt.length, pages=Math.max(1,Math.ceil(total/PER));
+  if(texpPage>pages) texpPage=1;
+  const start=(texpPage-1)*PER, slice=texpFilt.slice(start,start+PER);
+
+  document.getElementById('texpCnt').textContent=`${total.toLocaleString('es-GT')} resultado${total!==1?'s':''}`;
+  document.getElementById('texpPag').textContent=`Página ${texpPage} de ${pages} · ${total.toLocaleString('es-GT')} registros`;
+  document.getElementById('texpPrev').disabled=texpPage<=1;
+  document.getElementById('texpNext').disabled=texpPage>=pages;
+
+  if(!slice.length){
+    document.getElementById('texpBody').innerHTML='<tr><td colspan="16" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';
+    return;
+  }
+
+  const opts=[['pendiente','🔘 Pendiente'],['primer_intento','📞 1er intento'],['segundo_intento','📞📞 2do intento'],['renovado','✅ Tarjeta actualizada'],['no_renueva','❌ No actualiza']];
+  const canalOpts=[['','— Canal —'],['CAS','CAS'],['Clinica','Clínica'],['WhatsApp','WhatsApp'],['Presencial','Presencial'],['Digital','Digital'],['Otro','Otro']];
+
+  document.getElementById('texpBody').innerHTML=slice.map((r,i)=>{
+    const tid='texp_'+r.id;
+    const g=getG(tid);
+    const td=r.texpd||9999;
+    const rowCls=g.est==='renovado'?'done-row':td<0?'texp-row':'';
+    const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
+    const canalSel=canalOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
+    const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
+    const depBadge=r.dep>0?`<span class="dep-badge">+${r.dep} dep.</span>`:'';
+
+    // Urgencia label
+    let urgLbl, urgClr;
+    if(td<0){urgLbl=`VENCIDA (${Math.abs(td)}d)`;urgClr='#dc2626';}
+    else if(td<=15){urgLbl=`⚠ ${td}d crítico`;urgClr='#c2410c';}
+    else if(td<=30){urgLbl=`${td}d próxima`;urgClr='#d97706';}
+    else{urgLbl=`${td}d`;urgClr='#64748b';}
+
+    // Card expiry formatted
+    const texpFmt=r.texp?fmtDate(r.texp):'—';
+    const canalCls=(g.canal||'').replace(/\s/g,'');
+    const vtot=r.vtot||r.m||0;
+
+    return `<tr class="${rowCls}" id="tx${r.id}">
+      <td style="color:#94a3b8;font-size:.72rem">${start+i+1}</td>
+      <td>
+        <div style="font-weight:700;font-size:.85rem">${r.c}${depBadge}</div>
+        <div class="vid-lbl"><i class="fas fa-id-badge me-1" style="color:#94a3b8"></i>${r.vid||'—'}</div>
+      </td>
+      <td style="font-weight:800;font-size:.88rem;color:#1a3c5e">${r.t||'—'}</td>
+      <td style="font-size:.76rem;color:#475569">${r.p}</td>
+      <td style="font-size:.78rem">${r.dep>0?`<span style="color:#0369a1;font-weight:600">${r.dep} adic.</span>`:'<span style="color:#94a3b8">Titular</span>'}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${fmtDate(r.v)}</td>
+      <td style="white-space:nowrap;font-weight:700;font-size:.85rem;color:${urgClr}">${texpFmt}</td>
+      <td><span style="color:${urgClr};font-weight:700;font-size:.78rem">${urgLbl}</span></td>
+      <td>
+        <select class="est-dd ${g.est}" onchange="chgEstTexp('${tid}',this,${r.id})">
+          ${selOpts}
+        </select>
+      </td>
+      <td>
+        <input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}"
+          placeholder="Responsable..." onchange="chgResp('${tid}',this.value)">
+      </td>
+      <td>
+        <select class="canal-dd ${canalCls}" onchange="chgCanalG('${tid}',this)">
+          ${canalSel}
+        </select>
+      </td>
+      <td>
+        <input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha('${tid}','f1',this.value)">
+      </td>
+      <td>
+        <input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha('${tid}','f2',this.value)"
+          ${showF2?'':'style="opacity:.3;pointer-events:none"'}>
+      </td>
+      <td>
+        <input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}"
+          placeholder="No. Autorización..." onchange="chgAuth('${tid}',this.value)">
+      </td>
+      <td>
+        <input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}"
+          placeholder="Notas..." onchange="chgNota('${tid}',this.value)">
+      </td>
+      <td class="text-end" style="font-weight:700;color:#15803d;white-space:nowrap">${fmtQ(vtot)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function chgEstTexp(tid,sel,rid){
+  const g=getG(tid);
+  g.est=sel.value;
+  if(g.est==='primer_intento'&&!g.f1){
+    g.f1=new Date().toISOString().split('T')[0];
+    const row=document.getElementById('tx'+rid);
+    if(row) row.querySelectorAll('.finp')[0].value=g.f1;
+  }
+  if(g.est==='segundo_intento'&&!g.f2){
+    g.f2=new Date().toISOString().split('T')[0];
+    const row=document.getElementById('tx'+rid);
+    if(row) row.querySelectorAll('.finp')[1].value=g.f2;
+  }
+  saveG(tid,g);
+  sel.className='est-dd '+g.est;
+  const row=document.getElementById('tx'+rid);
+  if(row) row.className=g.est==='renovado'?'done-row':'texp-row';
+}
+
+function chgCanalG(tid,sel){
+  const g=getG(tid);
+  g.canal=sel.value;
+  saveG(tid,g);
+  sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');
+}
 
 // ════════════════════════════════════════
 // EXPORTS
@@ -947,6 +1179,19 @@ function exportarTok(){
     return [r.id,r.vid||'',r.c,r.t,r.e,r.p,r.dep||0,r.v,r.u,r.m,vtot].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
   });
   descargarCSV('cobro_automatico_conTokenizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
+}
+
+function exportarTexp(){
+  const h=['ID','Vivo ID','Nombre','Teléfono','Plan','Dependientes','Venc. Suscripción','Venc. Tarjeta','Días hasta venc. tarjeta','Urgencia','Estado','Responsable','Canal','Fecha 1er intento','Fecha 2do intento','Autorización','Notas','Valor Total Q'];
+  const rows=texpList.map(r=>{
+    const tid='texp_'+r.id;
+    const g=getG(tid);
+    const td=r.texpd||9999;
+    const urg=td<0?`Vencida ${Math.abs(td)}d`:td<=15?`Crítica ${td}d`:td<=30?`Próxima ${td}d`:`Normal ${td}d`;
+    const vtot=r.vtot||r.m||0;
+    return [r.id,r.vid||'',r.c,r.t,r.p,r.dep||0,r.v,r.texp||'',td,urg,g.est,g.resp||'',g.canal||'',g.f1||'',g.f2||'',g.auth||'',g.n||'',vtot].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');
+  });
+  descargarCSV('tarjetas_actualizar_'+hoy.toISOString().split('T')[0]+'.csv', [h.join(','),...rows].join('\r\n'));
 }
 
 function descargarCSV(nombre,contenido){
