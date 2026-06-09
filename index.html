@@ -372,8 +372,8 @@ tbody tr.texp-row td{background:#fff7ed;}
           <th>Fecha 2do intento</th>
           <th>Autorización/Voucher</th>
           <th>Notas</th>
-          <th class="text-end">Monto Real Q</th>
-          <th class="text-end">Monto Plan Q</th>
+          <th class="text-end">Monto Real Q <small style="font-weight:400;font-size:.62rem;opacity:.8">(editable)</small></th>
+          <th class="text-end">Monto Oportunidad Q</th>
           <th class="text-end">Comisión Q</th>
         </tr></thead>
         <tbody id="crmBody"></tbody>
@@ -792,8 +792,8 @@ function renderCRM(){
       <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)" ${showF2?'':'style="opacity:.3;pointer-events:none"'}></td>
       <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)"></td>
       <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
-      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Monto real renovación" onchange="chgMreal(${r.id},this.value)"></td>
-      <td class="text-end" style="color:#475569;white-space:nowrap">${fmtQ(r.m)}</td>
+      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)"></td>
+      <td class="text-end" style="color:#1a3c5e;font-weight:700;white-space:nowrap">${fmtQ(vtot)}</td>
       <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap">${fmtQ(r.com)}</td>
     </tr>`;
     html+=buildDepsRow(r,18);
@@ -988,7 +988,7 @@ function selAll(){const c=document.getElementById('chkAll').checked;document.que
 // EXPORTS
 // ═══════════════════════════════════════
 function exportarCRM(){
-  const h=['ID','Vivo ID','Nombre Titular','Teléfono','Email','Plan','Dependientes','Valor Total Q','Vencimiento','Días','Estado','Responsable','Canal','Fecha 1er intento','Fecha 2do intento','Autorización','Notas','Monto Real Q','Monto Plan Q','Comisión Q'];
+  const h=['ID','Vivo ID','Nombre Titular','Teléfono','Email','Plan','Dependientes','Vencimiento','Días','Estado','Responsable','Canal','Fecha 1er intento','Fecha 2do intento','Autorización','Notas','Monto Real Q','Monto Oportunidad Q','Comisión Q'];
   const rows=sinTok.map(r=>{
     const g=getG(r.id);const d=getDias(r.v);
     const dTxt=esMora(r)?`${Math.abs(d)}d vencida`:`${d}d`;
