@@ -729,7 +729,7 @@ function renderCRM(){
   const fresp=document.getElementById('crmResp').value;
 
   crmFilt=sinTok.filter(r=>{
-    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.vid||'').toLowerCase().includes(q)) return false;
+    if(q){const matchTit=r.c.toLowerCase().includes(q)||(r.t||'').includes(q)||(r.vid||'').toLowerCase().includes(q);const matchDep=(r.deps||[]).some(d=>d.c.toLowerCase().includes(q)||(d.t||'').includes(q)||(d.vid||'').toLowerCase().includes(q));if(!matchTit&&!matchDep)return false;}
     if(fp&&r.p!==fp) return false;
     if(fm==='mora'&&!esMora(r)) return false;
     if(fm==='proximo'&&!esProx(r)) return false;
@@ -810,7 +810,7 @@ function renderTok(){
   // Solo mostrar con tarjeta válida (texpd > 45 o sin fecha)
   tokFilt=conTok.filter(r=>{
     if((r.texpd!==undefined?r.texpd:9999)<=TEXP_ALERTA) return false; // está en la pestaña texp
-    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.vid||'').toLowerCase().includes(q)) return false;
+    if(q){const matchTit=r.c.toLowerCase().includes(q)||(r.t||'').includes(q)||(r.vid||'').toLowerCase().includes(q);const matchDep=(r.deps||[]).some(d=>d.c.toLowerCase().includes(q)||(d.t||'').includes(q)||(d.vid||'').toLowerCase().includes(q));if(!matchTit&&!matchDep)return false;}
     if(fp&&r.p!==fp) return false;
     if(fm==='mora'&&!esMora(r)) return false;
     if(fm==='proximo'&&!esProx(r)) return false;
@@ -870,7 +870,7 @@ function renderTexp(){
   const fe=document.getElementById('texpEst').value;
 
   texpFilt=texpList.filter(r=>{
-    if(q&&!r.c.toLowerCase().includes(q)&&!(r.t||'').includes(q)&&!(r.vid||'').toLowerCase().includes(q)) return false;
+    if(q){const matchTit=r.c.toLowerCase().includes(q)||(r.t||'').includes(q)||(r.vid||'').toLowerCase().includes(q);const matchDep=(r.deps||[]).some(d=>d.c.toLowerCase().includes(q)||(d.t||'').includes(q)||(d.vid||'').toLowerCase().includes(q));if(!matchTit&&!matchDep)return false;}
     const td=r.texpd||9999;
     if(fu==='vencida'&&td>=0) return false;
     if(fu==='critica'&&(td<0||td>15)) return false;
