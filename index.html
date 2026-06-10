@@ -161,6 +161,20 @@ tbody tr.texp-row td{background:#fff7ed;}
 .xclear{border:1px solid #e2e8f0;border-left:none;border-radius:0 6px 6px 0;background:#f1f5f9;color:#94a3b8;font-size:.7rem;padding:0 6px;height:30px;cursor:pointer;line-height:1;transition:.12s;}
 .xclear:hover{background:#fee2e2;color:#dc2626;border-color:#fecaca;}
 
+/* Fila bloqueada */
+tbody tr.locked-row td{background:#f0fdf4!important;opacity:.92;}
+tbody tr.locked-row input,tbody tr.locked-row select,tbody tr.locked-row textarea{pointer-events:none;background:#e9f5e9!important;border-color:#bbf7d0!important;color:#15803d;}
+.lock-btn{border:none;background:none;cursor:pointer;font-size:.85rem;padding:2px 5px;border-radius:5px;line-height:1;transition:.12s;}
+.lock-btn:hover{background:#e0f2fe;}
+.row-actions{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.act-btn{border:1px solid #e2e8f0;background:#f8fafc;border-radius:5px;padding:2px 6px;font-size:.66rem;font-weight:600;cursor:pointer;white-space:nowrap;line-height:1.4;transition:.12s;}
+.act-btn.save{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;}
+.act-btn.save:hover{background:#dcfce7;}
+.act-btn.clr{background:#fef2f2;border-color:#fecaca;color:#dc2626;}
+.act-btn.clr:hover{background:#fee2e2;}
+.act-btn.unlock{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8;}
+.act-btn.unlock:hover{background:#dbeafe;}
+
 /* Badges */
 .dep-badge{display:inline-flex;align-items:center;gap:4px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:10px;padding:2px 8px;font-size:.7rem;font-weight:700;margin-left:4px;cursor:pointer;user-select:none;transition:.15s;}
 .dep-badge:hover{background:#bfdbfe;border-color:#3b82f6;transform:scale(1.05);}
@@ -370,6 +384,7 @@ tbody tr.texp-row td{background:#fff7ed;}
           <th class="text-end">Monto Real Q <small style="font-weight:400;font-size:.62rem;opacity:.8">(editable)</small></th>
           <th class="text-end">Monto Oportunidad Q</th>
           <th class="text-end">Comisión Q</th>
+          <th style="text-align:center">Acciones</th>
         </tr></thead>
         <tbody id="crmBody"></tbody>
       </table>
@@ -770,9 +785,15 @@ function renderCRM(){
     const vtot=r.vtot||r.m||0;
     const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
     const comVal=Math.round((parseFloat(mrealVal)||vtot)*getComPct(r.p)*100)/100;
+    const locked=!!g.locked;
     const moraTag=mora?`<span class="tag-mora">⚠ EN MORA</span>`:'';
+    const lockedCls=locked?' locked-row':'';
+    const dis=locked?'disabled':'' ;
+    const accionesCell=locked
+      ? `<div class="row-actions"><button class="act-btn unlock" onclick="adminDesbloquear(${r.id})">🔓 Admin</button></div>`
+      : `<div class="row-actions"><button class="act-btn save" onclick="guardarFila(${r.id})">💾 Guardar</button><button class="act-btn clr" onclick="limpiarFila(${r.id})">🗑 Limpiar</button></div>`;
 
-    html+=`<tr class="${rowCls}" id="r${r.id}">
+    html+=`<tr class="${rowCls}${lockedCls}" id="r${r.id}">
       <td><input type="checkbox" class="crm-chk" value="${r.id}"></td>
       <td></td>
       <td style="color:#94a3b8;font-size:.71rem">${start+i+1}</td>
@@ -785,18 +806,19 @@ function renderCRM(){
       <td style="font-size:.75rem;color:#475569">${r.p}</td>
       <td style="white-space:nowrap;font-size:.77rem">${fmtDate(r.v)}</td>
       <td style="white-space:nowrap">${diasTxt(r)}</td>
-      <td><select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)">${selOpts}</select></td>
-      <td><input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp(${r.id},this.value)"></td>
-      <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)">${canalSel}</select></td>
-      <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)"></td>
-      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)"></td>
-      <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)"></td>
-      <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
-      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)"></td>
+      <td><select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)" ${dis}>${selOpts}</select></td>
+      <td><input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp(${r.id},this.value)" ${dis}></td>
+      <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)" ${dis}>${canalSel}</select></td>
+      <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)" ${dis}></td>
+      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)" ${dis}></td>
+      <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)" ${dis}></td>
+      <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)" ${dis}></td>
+      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)" ${dis}></td>
       <td class="text-end" style="color:#1a3c5e;font-weight:700;white-space:nowrap">${fmtQ(vtot)}</td>
       <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap" title="${getComPct(r.p)*100}% de ${fmtQ(parseFloat(mrealVal)||vtot)}">${fmtQ(comVal)}</td>
+      <td style="text-align:center;vertical-align:middle">${accionesCell}</td>
     </tr>`;
-    html+=buildDepsRow(r,18);
+    html+=buildDepsRow(r,20);
   });
   document.getElementById('crmBody').innerHTML=html;
 }
@@ -979,13 +1001,29 @@ function chgCanalG(tid,sel){const g=getG(tid);g.canal=sel.value;saveG(tid,g);sel
 function pgCRM(d){crmPage+=d;renderCRM();window.scrollTo(0,300);}
 function pgTok(d){tokPage+=d;renderTok();window.scrollTo(0,300);}
 function pgTexp(d){texpPage+=d;renderTexp();window.scrollTo(0,300);}
+const ADMIN_PW='vivolife2026';
+function adminOk(msg){const pw=prompt(msg||'Contraseña de administrador:');return pw===ADMIN_PW;}
+
 function clr(id){const el=document.getElementById(id);if(el)el.value='';}
 function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora','crmCanal','crmResp'].forEach(x=>clr(x));crmPage=1;renderCRM();}
 function limpiarCRMAdmin(){
-  const pw=prompt('Contraseña para limpiar todos los filtros:');
-  if(pw===null)return;
-  if(pw!=='vivolife2026'){alert('Contraseña incorrecta.');return;}
+  if(!adminOk('Contraseña para limpiar todos los filtros:'))return;
   limpiarCRM();
+}
+
+// ── GUARDAR / LIMPIAR / DESBLOQUEAR FILA ──
+function guardarFila(id){
+  if(!confirm('¿Guardar y bloquear esta fila? Solo el administrador podrá editarla después.'))return;
+  const g=getG(id);g.locked=true;saveG(id,g);renderCRM();renderStats();
+}
+function limpiarFila(id){
+  if(!confirm('¿Limpiar todos los datos de gestión de esta fila?'))return;
+  saveG(id,{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',locked:false});
+  renderCRM();renderStats();
+}
+function adminDesbloquear(id){
+  if(!adminOk('Contraseña de administrador para desbloquear esta fila:'))return;
+  const g=getG(id);g.locked=false;saveG(id,g);renderCRM();
 }
 function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
 function limpiarTexp(){['texpQ','texpUrgencia','texpEst'].forEach(x=>document.getElementById(x).value='');texpPage=1;renderTexp();}
@@ -1037,11 +1075,19 @@ function getComPct(plan){
 }
 
 function toggleCfg(){
-  document.getElementById('cfgPanel').classList.toggle('d-none');
+  const panel=document.getElementById('cfgPanel');
+  if(panel.classList.contains('d-none')){
+    if(!adminOk('Contraseña de administrador para configurar metas:'))return;
+  }
+  panel.classList.toggle('d-none');
   document.getElementById('comCfgPanel').classList.add('d-none');
 }
 function toggleComCfg(){
-  document.getElementById('comCfgPanel').classList.toggle('d-none');
+  const panel=document.getElementById('comCfgPanel');
+  if(panel.classList.contains('d-none')){
+    if(!adminOk('Contraseña de administrador para configurar comisiones:'))return;
+  }
+  panel.classList.toggle('d-none');
   document.getElementById('cfgPanel').classList.add('d-none');
   // Cargar valores actuales
   document.getElementById('com-silver').value=comCfg.silver;
