@@ -594,8 +594,9 @@ function init(){
   document.getElementById('k-sin-sub').textContent=`${mora} en mora · ${prox} próximas`;
   document.getElementById('k-texp').textContent=texpList.length.toLocaleString('es-GT');
   document.getElementById('k-texp-sub').textContent=`${texpV} ya vencidas · ${texpList.length-texpV} ≤45d`;
+  const conTokActivos=conTok.filter(r=>!esMora(r));
   document.getElementById('b-crm').textContent=sinTok.length.toLocaleString('es-GT');
-  document.getElementById('b-tok').textContent=conTok.length.toLocaleString('es-GT');
+  document.getElementById('b-tok').textContent=conTokActivos.length.toLocaleString('es-GT');
   document.getElementById('b-texp').textContent=texpList.length.toLocaleString('es-GT');
 
   buildRespList();
@@ -703,7 +704,7 @@ function noResultMsg(currentTab, q){
   }
   const tabs=[
     {tab:'crm', label:'Gestión CRM (Sin Token)', list:sinTok},
-    {tab:'tok', label:'Cobro Automático (Con Token)', list:conTok},
+    {tab:'tok', label:'Cobro Automático (Con Token)', list:conTok.filter(r=>!esMora(r))},
     {tab:'texp', label:'Tarjetas por Actualizar', list:texpList}
   ];
   const others=tabs.filter(x=>x.tab!==currentTab && (x.list||[]).some(matchRec));
@@ -732,7 +733,7 @@ function globalSearch(){
 
   const allData=[
     {tab:'crm', label:'Gestión CRM (Sin Token)', list:sinTok},
-    {tab:'tok', label:'Cobro automático (Con Token)', list:conTok},
+    {tab:'tok', label:'Cobro automático (Con Token)', list:conTok.filter(r=>!esMora(r))},
     {tab:'texp', label:'Tarjetas por actualizar', list:texpList}
   ];
 
