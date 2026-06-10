@@ -156,8 +156,9 @@ tbody tr.texp-row td{background:#fff7ed;}
 .finp:focus,.ninp:focus,.ainp:focus,.minp:focus,.rinp:focus{outline:none;border-color:#1a3c5e;}
 
 /* Badges */
-.dep-badge{display:inline-block;background:#dbeafe;color:#1e40af;border-radius:10px;padding:1px 6px;font-size:.63rem;font-weight:700;margin-left:4px;cursor:pointer;}
-.dep-badge:hover{background:#bfdbfe;}
+.dep-badge{display:inline-flex;align-items:center;gap:4px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:10px;padding:2px 8px;font-size:.7rem;font-weight:700;margin-left:4px;cursor:pointer;user-select:none;transition:.15s;}
+.dep-badge:hover{background:#bfdbfe;border-color:#3b82f6;transform:scale(1.05);}
+.dep-badge:active{transform:scale(.97);}
 .vid-lbl{font-size:.63rem;color:#94a3b8;letter-spacing:.3px;margin-top:1px;}
 .tag-mora{background:#fecaca;color:#991b1b;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;}
 .tag-prox{background:#fef3c7;color:#92400e;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;}
@@ -619,10 +620,14 @@ function saveG(id,o){gestion[id]=o;localStorage.setItem('rv9_g',JSON.stringify(g
 // ═══════════════════════════════════════
 function toggleDeps(id){
   const row=document.getElementById('deps-'+id);
-  const btn=document.getElementById('exp-'+id);
+  const btn=document.getElementById('dep-btn-'+id);
   if(!row)return;
   const hidden=row.classList.toggle('d-none');
-  if(btn)btn.innerHTML=hidden?'<i class="fas fa-chevron-right"></i>':'<i class="fas fa-chevron-down" style="color:#0369a1"></i>';
+  if(btn){
+    const ico=btn.querySelector('.fa-chevron-down,.fa-chevron-up');
+    if(ico){ico.className=hidden?'fas fa-chevron-down':'fas fa-chevron-up';}
+    btn.style.background=hidden?'':'#bfdbfe';
+  }
 }
 
 function buildDepsRow(r, colspan){
@@ -765,8 +770,8 @@ function renderCRM(){
     const canalSel=cOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
     const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
     const hasD=r.deps&&r.deps.length>0;
-    const expBtn=hasD?`<button class="exp-btn" id="exp-${r.id}" onclick="toggleDeps(${r.id})" title="Ver ${r.deps.length} dependiente${r.deps.length>1?'s':''}"><i class="fas fa-chevron-right"></i></button>`:'';
-    const depBadge=hasD?`<span class="dep-badge" onclick="toggleDeps(${r.id})">+${r.deps.length} dep.</span>`:'';
+    const expBtn='';
+    const depBadge=hasD?`<button class="dep-badge" id="dep-btn-${r.id}" onclick="toggleDeps(${r.id})"><i class="fas fa-users me-1"></i>+${r.deps.length} dep. <i class="fas fa-chevron-down" style="font-size:.55rem"></i></button>`:'';
     const canalCls=(g.canal||'').replace(/\s/g,'');
     const vtot=r.vtot||r.m||0;
     const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
@@ -774,7 +779,7 @@ function renderCRM(){
 
     html+=`<tr class="${rowCls}" id="r${r.id}">
       <td><input type="checkbox" class="crm-chk" value="${r.id}"></td>
-      <td>${expBtn}</td>
+      <td></td>
       <td style="color:#94a3b8;font-size:.71rem">${start+i+1}</td>
       <td>
         <div style="font-weight:700;font-size:.84rem">${r.c}${depBadge}</div>
