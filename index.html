@@ -473,11 +473,17 @@ tbody tr.locked-row input,tbody tr.locked-row select,tbody tr.locked-row textare
   </div>
   <div class="fbar">
     <input type="text" id="texpQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderTexp()" style="min-width:195px">
+    <select id="texpSuscripcion" onchange="renderTexp()">
+      <option value="">Suscripción: todas</option>
+      <option value="mora">🔴 Suscripción vencida (overdue)</option>
+      <option value="proximo">🟡 Suscripción próxima ≤60d</option>
+      <option value="activo">🟢 Suscripción activa</option>
+    </select>
     <select id="texpUrgencia" onchange="renderTexp()">
-      <option value="">Toda urgencia</option>
+      <option value="">Toda urgencia tarjeta</option>
       <option value="vencida">🔴 Tarjeta ya vencida</option>
-      <option value="critica">🟠 Vence ≤15 días</option>
-      <option value="proxima">🟡 Vence ≤30 días</option>
+      <option value="critica">🟠 Tarjeta ≤15 días</option>
+      <option value="proxima">🟡 Tarjeta ≤30 días</option>
     </select>
     <select id="texpEst" onchange="renderTexp()">
       <option value="">Todos los estados</option>
@@ -968,6 +974,7 @@ function renderTexp(){
   const q=document.getElementById('texpQ').value.toLowerCase();
   const fu=document.getElementById('texpUrgencia').value;
   const fe=document.getElementById('texpEst').value;
+  const fs=document.getElementById('texpSuscripcion').value;
 
   texpFilt=texpList.filter(r=>{
     if(q){const matchTit=r.c.toLowerCase().includes(q)||(r.t||'').includes(q)||(r.vid||'').toLowerCase().includes(q);const matchDep=(r.deps||[]).some(d=>d.c.toLowerCase().includes(q)||(d.t||'').includes(q)||(d.vid||'').toLowerCase().includes(q));if(!matchTit&&!matchDep)return false;}
@@ -977,6 +984,9 @@ function renderTexp(){
     if(fu==='proxima'&&(td<0||td>30)) return false;
     const g=getG('tx_'+r.id);
     if(fe&&g.est!==fe) return false;
+    if(fs==='mora'&&!esMora(r)) return false;
+    if(fs==='proximo'&&!esProx(r)) return false;
+    if(fs==='activo'&&(esMora(r)||esProx(r))) return false;
     return true;
   });
 
@@ -1004,6 +1014,11 @@ function renderTexp(){
     if(td<0){urgLbl=`VENCIDA (${Math.abs(td)}d)`;urgCls='urg-v';}
     else if(td<=15){urgLbl=`⚠ ${td}d crítico`;urgCls='urg-c';}
     else{urgLbl=`${td}d`;urgCls='urg-p';}
+    const suscBadge=esMora(r)
+      ?`<span style="background:#fee2e2;color:#dc2626;font-size:.64rem;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:4px">OVERDUE</span>`
+      :esProx(r)
+      ?`<span style="background:#fef9c3;color:#b45309;font-size:.64rem;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:4px">PRÓXIMA</span>`
+      :`<span style="background:#dcfce7;color:#15803d;font-size:.64rem;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:4px">ACTIVE</span>`;
     const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
     const canalSel=cOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
     const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
@@ -1019,7 +1034,7 @@ function renderTexp(){
       <td style="font-weight:800;font-size:.87rem;color:#1a3c5e">${r.t||'—'}</td>
       <td style="font-size:.75rem;color:#475569">${r.p}</td>
       <td style="font-size:.77rem">${r.dep>0?`<span style="color:#0369a1;font-weight:600">${r.dep} adic.</span>`:'<span style="color:#94a3b8">Titular</span>'}</td>
-      <td style="white-space:nowrap;font-size:.77rem">${fmtDate(r.v)}</td>
+      <td style="white-space:nowrap;font-size:.77rem">${fmtDate(r.v)}${suscBadge}</td>
       <td style="white-space:nowrap;font-weight:700;font-size:.84rem" class="${urgCls}">${r.texp?fmtDate(r.texp):'—'}</td>
       <td><span class="${urgCls}" style="font-size:.77rem;font-weight:700">${urgLbl}</span></td>
       <td><select class="est-dd ${g.est}" onchange="chgEstTx('${tid}',this,${r.id})">${selOpts}</select></td>
