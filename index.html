@@ -227,7 +227,10 @@ tbody tr.texp-row td{background:#fff7ed;}
 <div class="perf-panel">
   <div class="perf-header">
     <span><i class="fas fa-headset me-2"></i>Rendimiento Call Center</span>
-    <button class="perf-cfg-btn" onclick="toggleCfg()"><i class="fas fa-sliders me-1"></i>Configurar metas</button>
+    <div class="d-flex gap-2">
+      <button class="perf-cfg-btn" onclick="toggleCfg()"><i class="fas fa-sliders me-1"></i>Configurar metas</button>
+      <button class="perf-cfg-btn" style="color:#15803d;border-color:#bbf7d0;background:#f0fdf4" onclick="toggleComCfg()"><i class="fas fa-percent me-1"></i>Configurar comisiones</button>
+    </div>
   </div>
   <div class="cfg-panel d-none" id="cfgPanel">
     <div class="cfg-row">
@@ -240,6 +243,17 @@ tbody tr.texp-row td{background:#fff7ed;}
         <label>Renovaciones <input type="number" id="cfg-clin-rv" value="38" min="0" onchange="guardarCfg()"></label>
       </div>
     </div>
+  </div>
+  <div class="cfg-panel d-none" id="comCfgPanel" style="background:#f0fdf4;border-bottom:1px solid #bbf7d0">
+    <div style="font-size:.78rem;font-weight:700;color:#15803d;margin-bottom:9px"><i class="fas fa-percent me-1"></i>Comisión por plan (% sobre valor del plan)</div>
+    <div class="cfg-row" style="gap:20px;flex-wrap:wrap">
+      <label style="font-size:.79rem;display:flex;align-items:center;gap:7px;color:#1e293b">Vivolife Silver <input type="number" id="com-silver" step="0.1" min="0" max="100" value="5" style="width:60px;border:1px solid #bbf7d0;border-radius:5px;padding:3px 6px;font-size:.79rem" onchange="guardarComCfg()">%</label>
+      <label style="font-size:.79rem;display:flex;align-items:center;gap:7px;color:#1e293b">Vivolife <input type="number" id="com-vivolife" step="0.1" min="0" max="100" value="5" style="width:60px;border:1px solid #bbf7d0;border-radius:5px;padding:3px 6px;font-size:.79rem" onchange="guardarComCfg()">%</label>
+      <label style="font-size:.79rem;display:flex;align-items:center;gap:7px;color:#1e293b">Vivolife Plus <input type="number" id="com-plus" step="0.1" min="0" max="100" value="6" style="width:60px;border:1px solid #bbf7d0;border-radius:5px;padding:3px 6px;font-size:.79rem" onchange="guardarComCfg()">%</label>
+      <label style="font-size:.79rem;display:flex;align-items:center;gap:7px;color:#1e293b">Vivolife+Gruas <input type="number" id="com-gruas" step="0.1" min="0" max="100" value="5" style="width:60px;border:1px solid #bbf7d0;border-radius:5px;padding:3px 6px;font-size:.79rem" onchange="guardarComCfg()">%</label>
+      <label style="font-size:.79rem;display:flex;align-items:center;gap:7px;color:#1e293b">Vivolife Experiencia <input type="number" id="com-exp" step="0.1" min="0" max="100" value="5" style="width:60px;border:1px solid #bbf7d0;border-radius:5px;padding:3px 6px;font-size:.79rem" onchange="guardarComCfg()">%</label>
+    </div>
+    <div style="font-size:.7rem;color:#64748b;margin-top:7px">La comisión se calcula sobre el <strong>Monto Real</strong> registrado (o Monto Oportunidad si no se ha tipificado).</div>
   </div>
   <div class="perf-grid">
     <div class="pkpi-card">
@@ -755,6 +769,7 @@ function renderCRM(){
     const canalCls=(g.canal||'').replace(/\s/g,'');
     const vtot=r.vtot||r.m||0;
     const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
+    const comVal=Math.round((parseFloat(mrealVal)||vtot)*getComPct(r.p)*100)/100;
     const moraTag=mora?`<span class="tag-mora">⚠ EN MORA</span>`:'';
 
     html+=`<tr class="${rowCls}" id="r${r.id}">
@@ -779,7 +794,7 @@ function renderCRM(){
       <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
       <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)"></td>
       <td class="text-end" style="color:#1a3c5e;font-weight:700;white-space:nowrap">${fmtQ(vtot)}</td>
-      <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap">${fmtQ(r.com)}</td>
+      <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap" title="${getComPct(r.p)*100}% de ${fmtQ(parseFloat(mrealVal)||vtot)}">${fmtQ(comVal)}</td>
     </tr>`;
     html+=buildDepsRow(r,18);
   });
@@ -1010,7 +1025,40 @@ function descargarCSV(nombre,contenido){const a=document.createElement('a');a.hr
 // ═══════════════════════════════════════
 let perfCfg=JSON.parse(localStorage.getItem('rv9_perf_cfg')||'null')||{casLL:440,casRV:88,clinLL:189,clinRV:38};
 let perfData=JSON.parse(localStorage.getItem('rv9_perf_data')||'null')||{casLL:0,casCp:0,casRV:0,clinLL:0,clinCp:0,clinRV:0};
-function toggleCfg(){document.getElementById('cfgPanel').classList.toggle('d-none');}
+let comCfg=JSON.parse(localStorage.getItem('rv9_com_cfg')||'null')||{silver:5,vivolife:5,plus:6,gruas:5,exp:5};
+
+function getComPct(plan){
+  const p=(plan||'').toLowerCase();
+  if(p.includes('plus'))   return comCfg.plus/100;
+  if(p.includes('grua'))   return comCfg.gruas/100;
+  if(p.includes('silver')) return comCfg.silver/100;
+  if(p.includes('experiencia')) return comCfg.exp/100;
+  return comCfg.vivolife/100;
+}
+
+function toggleCfg(){
+  document.getElementById('cfgPanel').classList.toggle('d-none');
+  document.getElementById('comCfgPanel').classList.add('d-none');
+}
+function toggleComCfg(){
+  document.getElementById('comCfgPanel').classList.toggle('d-none');
+  document.getElementById('cfgPanel').classList.add('d-none');
+  // Cargar valores actuales
+  document.getElementById('com-silver').value=comCfg.silver;
+  document.getElementById('com-vivolife').value=comCfg.vivolife;
+  document.getElementById('com-plus').value=comCfg.plus;
+  document.getElementById('com-gruas').value=comCfg.gruas;
+  document.getElementById('com-exp').value=comCfg.exp;
+}
+function guardarComCfg(){
+  comCfg.silver   = parseFloat(document.getElementById('com-silver').value)||5;
+  comCfg.vivolife = parseFloat(document.getElementById('com-vivolife').value)||5;
+  comCfg.plus     = parseFloat(document.getElementById('com-plus').value)||6;
+  comCfg.gruas    = parseFloat(document.getElementById('com-gruas').value)||5;
+  comCfg.exp      = parseFloat(document.getElementById('com-exp').value)||5;
+  localStorage.setItem('rv9_com_cfg',JSON.stringify(comCfg));
+  renderCRM();
+}
 function guardarCfg(){
   perfCfg.casLL=parseInt(document.getElementById('cfg-cas-ll').value)||0;
   perfCfg.casRV=parseInt(document.getElementById('cfg-cas-rv').value)||0;
