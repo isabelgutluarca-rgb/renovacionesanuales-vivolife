@@ -155,6 +155,12 @@ tbody tr.texp-row td{background:#fff7ed;}
 .rinp{border:1px solid #e2e8f0;border-radius:6px;padding:4px 6px;font-size:.73rem;background:#f8fafc;width:108px;}
 .finp:focus,.ninp:focus,.ainp:focus,.minp:focus,.rinp:focus{outline:none;border-color:#1a3c5e;}
 
+/* Filtros por columna */
+.filt-grp{display:flex;align-items:center;gap:0;}
+.filt-grp input,.filt-grp select{border-radius:6px 0 0 6px;border-right:none!important;}
+.xclear{border:1px solid #e2e8f0;border-left:none;border-radius:0 6px 6px 0;background:#f1f5f9;color:#94a3b8;font-size:.7rem;padding:0 6px;height:30px;cursor:pointer;line-height:1;transition:.12s;}
+.xclear:hover{background:#fee2e2;color:#dc2626;border-color:#fecaca;}
+
 /* Badges */
 .dep-badge{display:inline-flex;align-items:center;gap:4px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:10px;padding:2px 8px;font-size:.7rem;font-weight:700;margin-left:4px;cursor:pointer;user-select:none;transition:.15s;}
 .dep-badge:hover{background:#bfdbfe;border-color:#3b82f6;transform:scale(1.05);}
@@ -319,39 +325,13 @@ tbody tr.texp-row td{background:#fff7ed;}
   </div>
   <div class="stats-row" id="crmStats"></div>
   <div class="fbar">
-    <input type="text" id="crmQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderCRM()" style="min-width:195px">
-    <select id="crmEst" onchange="renderCRM()">
-      <option value="">Todos los estados</option>
-      <option value="pendiente">🔘 Pendiente</option>
-      <option value="primer_intento">📞 1er intento</option>
-      <option value="segundo_intento">📞📞 2do intento</option>
-      <option value="renovado">✅ Renovado</option>
-      <option value="no_renueva">❌ No renueva</option>
-    </select>
-    <select id="crmPlan" onchange="renderCRM()">
-      <option value="">Todos los planes</option>
-      <option value="Vivolife Silver">Vivolife Silver</option>
-      <option value="Vivolife">Vivolife</option>
-      <option value="Vivolife Plus">Vivolife Plus</option>
-      <option value="Vivolife+Gruas">Vivolife+Gruas</option>
-    </select>
-    <select id="crmMora" onchange="renderCRM()">
-      <option value="">Todos</option>
-      <option value="mora">🔴 En mora</option>
-      <option value="proximo">🟡 Próximos ≤60d</option>
-      <option value="activo">🟢 Activos</option>
-    </select>
-    <select id="crmCanal" onchange="renderCRM()">
-      <option value="">Todos los canales</option>
-      <option value="CAS">CAS</option>
-      <option value="Clinica">Clínica</option>
-      <option value="WhatsApp">WhatsApp</option>
-      <option value="Presencial">Presencial</option>
-      <option value="Digital">Digital</option>
-      <option value="Otro">Otro</option>
-    </select>
-    <select id="crmResp" onchange="renderCRM()"><option value="">Todos los responsables</option></select>
-    <button class="pbtn ms-auto" onclick="limpiarCRM()"><i class="fas fa-rotate-left me-1"></i>Limpiar</button>
+    <div class="filt-grp"><input type="text" id="crmQ" placeholder="🔍 Nombre, Vivo ID, teléfono..." oninput="renderCRM()" style="min-width:175px"><button class="xclear" onclick="clr('crmQ');renderCRM()" title="Limpiar búsqueda">✕</button></div>
+    <div class="filt-grp"><select id="crmEst" onchange="renderCRM()"><option value="">Todos los estados</option><option value="pendiente">🔘 Pendiente</option><option value="primer_intento">📞 1er intento</option><option value="segundo_intento">📞📞 2do intento</option><option value="renovado">✅ Renovado</option><option value="no_renueva">❌ No renueva</option></select><button class="xclear" onclick="clr('crmEst');renderCRM()" title="Limpiar estado">✕</button></div>
+    <div class="filt-grp"><select id="crmPlan" onchange="renderCRM()"><option value="">Todos los planes</option><option value="Vivolife Silver">Vivolife Silver</option><option value="Vivolife">Vivolife</option><option value="Vivolife Plus">Vivolife Plus</option><option value="Vivolife+Gruas">Vivolife+Gruas</option></select><button class="xclear" onclick="clr('crmPlan');renderCRM()" title="Limpiar plan">✕</button></div>
+    <div class="filt-grp"><select id="crmMora" onchange="renderCRM()"><option value="">Todos</option><option value="mora">🔴 En mora</option><option value="proximo">🟡 Próximos ≤60d</option><option value="activo">🟢 Activos</option></select><button class="xclear" onclick="clr('crmMora');renderCRM()" title="Limpiar urgencia">✕</button></div>
+    <div class="filt-grp"><select id="crmCanal" onchange="renderCRM()"><option value="">Todos los canales</option><option value="CAS">CAS</option><option value="Clinica">Clínica</option><option value="WhatsApp">WhatsApp</option><option value="Presencial">Presencial</option><option value="Digital">Digital</option><option value="Otro">Otro</option></select><button class="xclear" onclick="clr('crmCanal');renderCRM()" title="Limpiar canal">✕</button></div>
+    <div class="filt-grp"><select id="crmResp" onchange="renderCRM()"><option value="">Todos los responsables</option></select><button class="xclear" onclick="clr('crmResp');renderCRM()" title="Limpiar responsable">✕</button></div>
+    <button class="pbtn ms-auto" style="background:#fef2f2;border-color:#fecaca;color:#991b1b" onclick="limpiarCRMAdmin()"><i class="fas fa-rotate-left me-1"></i>Limpiar todo</button>
     <span id="crmCnt" style="font-size:.74rem;color:#64748b"></span>
   </div>
   <div class="twrap">
@@ -794,7 +774,7 @@ function renderCRM(){
       <td><input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp(${r.id},this.value)"></td>
       <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)">${canalSel}</select></td>
       <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)"></td>
-      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)" ${showF2?'':'style="opacity:.3;pointer-events:none"'}></td>
+      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)"></td>
       <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)"></td>
       <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
       <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)"></td>
@@ -931,7 +911,7 @@ function renderTexp(){
       <td><input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp('${tid}',this.value)"></td>
       <td><select class="canal-dd ${canalCls}" onchange="chgCanalG('${tid}',this)">${canalSel}</select></td>
       <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha('${tid}','f1',this.value)"></td>
-      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha('${tid}','f2',this.value)" ${showF2?'':'style="opacity:.3;pointer-events:none"'}></td>
+      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha('${tid}','f2',this.value)"></td>
       <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth('${tid}',this.value)"></td>
       <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota('${tid}',this.value)"></td>
       <td class="text-end" style="color:#15803d;font-weight:700">${fmtQ(r.vtot||r.m)}</td>
@@ -984,7 +964,14 @@ function chgCanalG(tid,sel){const g=getG(tid);g.canal=sel.value;saveG(tid,g);sel
 function pgCRM(d){crmPage+=d;renderCRM();window.scrollTo(0,300);}
 function pgTok(d){tokPage+=d;renderTok();window.scrollTo(0,300);}
 function pgTexp(d){texpPage+=d;renderTexp();window.scrollTo(0,300);}
-function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora','crmCanal','crmResp'].forEach(x=>document.getElementById(x).value='');crmPage=1;renderCRM();}
+function clr(id){const el=document.getElementById(id);if(el)el.value='';}
+function limpiarCRM(){['crmQ','crmEst','crmPlan','crmMora','crmCanal','crmResp'].forEach(x=>clr(x));crmPage=1;renderCRM();}
+function limpiarCRMAdmin(){
+  const pw=prompt('Contraseña para limpiar todos los filtros:');
+  if(pw===null)return;
+  if(pw!=='vivolife2026'){alert('Contraseña incorrecta.');return;}
+  limpiarCRM();
+}
 function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
 function limpiarTexp(){['texpQ','texpUrgencia','texpEst'].forEach(x=>document.getElementById(x).value='');texpPage=1;renderTexp();}
 function selAll(){const c=document.getElementById('chkAll').checked;document.querySelectorAll('.crm-chk').forEach(x=>x.checked=c);}
