@@ -681,6 +681,32 @@ function setTab(t){
   });
 }
 
+function noResultMsg(currentTab, q){
+  if(!q||!q.trim()) return 'Sin resultados';
+  const qq=q.trim().toLowerCase();
+  function matchRec(r){
+    if(r.c.toLowerCase().includes(qq)) return true;
+    if((r.vid||'').toLowerCase().includes(qq)) return true;
+    if((r.t||'').includes(qq)) return true;
+    if((r.deps||[]).some(d=>d.c.toLowerCase().includes(qq)||(d.vid||'').toLowerCase().includes(qq)||(d.t||'').includes(qq))) return true;
+    return false;
+  }
+  const tabs=[
+    {tab:'crm', label:'Gestión CRM (Sin Token)', list:sinTok},
+    {tab:'tok', label:'Cobro Automático (Con Token)', list:conTok},
+    {tab:'texp', label:'Tarjetas por Actualizar', list:texpList}
+  ];
+  const others=tabs.filter(x=>x.tab!==currentTab && (x.list||[]).some(matchRec));
+  if(!others.length) return 'Sin resultados';
+  const links=others.map(x=>{
+    const cnt=(x.list||[]).filter(matchRec).length;
+    const map={crm:'crmQ',tok:'tokQ',texp:'texpQ'};
+    const renders={crm:'renderCRM()',tok:'renderTok()',texp:'renderTexp()'};
+    return `<a href="#" onclick="setTab('${x.tab}');document.getElementById('${map[x.tab]}').value='${q.replace(/'/g,"\\'")}';${renders[x.tab]};return false;" style="color:#1a3c5e;font-weight:700;text-decoration:underline">${x.label} (${cnt} resultado${cnt!==1?'s':''})</a>`;
+  }).join(' &nbsp;·&nbsp; ');
+  return `No está aquí &nbsp;→&nbsp; Encontrado en: ${links}`;
+}
+
 function globalSearch(){
   const q=(document.getElementById('globalQ').value||'').trim().toLowerCase();
   const res=document.getElementById('globalResult');
@@ -817,7 +843,7 @@ function renderCRM(){
   document.getElementById('crmPrev').disabled=crmPage<=1;
   document.getElementById('crmNext').disabled=crmPage>=pages;
 
-  if(!slice.length){document.getElementById('crmBody').innerHTML='<tr><td colspan="18" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';return;}
+  if(!slice.length){document.getElementById('crmBody').innerHTML='<tr><td colspan="18" class="text-center py-5" style="color:#94a3b8">'+noResultMsg('crm',document.getElementById('crmQ').value)+'</td></tr>';return;}
 
   const opts=[['pendiente','🔘 Pendiente'],['primer_intento','📞 1er intento'],['segundo_intento','📞📞 2do intento'],['renovado','✅ Renovado'],['no_renueva','❌ No renueva']];
   const cOpts=[['','— Canal —'],['CAS','CAS'],['Clinica','Clínica'],['WhatsApp','WhatsApp'],['Presencial','Presencial'],['Digital','Digital'],['Otro','Otro']];
@@ -901,7 +927,7 @@ function renderTok(){
   document.getElementById('tokPrev').disabled=tokPage<=1;
   document.getElementById('tokNext').disabled=tokPage>=pages;
 
-  if(!slice.length){document.getElementById('tokBody').innerHTML='<tr><td colspan="12" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';return;}
+  if(!slice.length){document.getElementById('tokBody').innerHTML='<tr><td colspan="12" class="text-center py-5" style="color:#94a3b8">'+noResultMsg('tok',document.getElementById('tokQ').value)+'</td></tr>';return;}
 
   let html='';
   slice.forEach((r,i)=>{
@@ -963,7 +989,7 @@ function renderTexp(){
   document.getElementById('texpPrev').disabled=texpPage<=1;
   document.getElementById('texpNext').disabled=texpPage>=pages;
 
-  if(!slice.length){document.getElementById('texpBody').innerHTML='<tr><td colspan="17" class="text-center py-5" style="color:#94a3b8">Sin resultados</td></tr>';return;}
+  if(!slice.length){document.getElementById('texpBody').innerHTML='<tr><td colspan="17" class="text-center py-5" style="color:#94a3b8">'+noResultMsg('texp',document.getElementById('texpQ').value)+'</td></tr>';return;}
 
   const opts=[['pendiente','🔘 Pendiente'],['primer_intento','📞 1er intento'],['segundo_intento','📞📞 2do intento'],['renovado','✅ Tarjeta actualizada'],['no_renueva','❌ No actualiza']];
   const cOpts=[['','— Canal —'],['CAS','CAS'],['Clinica','Clínica'],['WhatsApp','WhatsApp'],['Presencial','Presencial'],['Digital','Digital'],['Otro','Otro']];
