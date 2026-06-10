@@ -577,8 +577,8 @@ function init(){
 
   const total=sinTok.length+conTok.length;
   const pct=total?(conTok.length/total*100).toFixed(1):0;
-  const mora=sinTok.filter(r=>esMora(r)).length;
-  const prox=sinTok.filter(r=>esProx(r)).length;
+  const mora=[...sinTok,...conTok].filter(r=>esMora(r)).length;
+  const prox=[...sinTok,...conTok].filter(r=>esProx(r)).length;
   const texpV=texpList.filter(r=>(r.texpd||9999)<0).length;
 
   document.getElementById('k-total').textContent=total.toLocaleString('es-GT');
@@ -774,7 +774,7 @@ function renderStats(){
   sinTok.forEach(r=>{const e=getG(r.id).est;cnt[e]=(cnt[e]||0)+1;});
   let h=`<span class="chip"><i class="fas fa-users" style="color:#1a3c5e"></i>${sinTok.length.toLocaleString('es-GT')} total sin tarjeta</span>`;
   // Contar mora
-  const moraCount=sinTok.filter(r=>esMora(r)).length;
+  const moraCount=[...sinTok,...conTok].filter(r=>esMora(r)).length;
   if(moraCount>0) h+=`<span class="chip" style="background:#fef2f2;border-color:#fecaca;color:#991b1b">🔴 ${moraCount} en mora</span>`;
   Object.entries(labs).forEach(([k,[ic,cl,lb]])=>{if(cnt[k]>0)h+=`<span class="chip ${cl}">${ic} ${lb}: <strong>${cnt[k]}</strong></span>`;});
   document.getElementById('crmStats').innerHTML=h;
