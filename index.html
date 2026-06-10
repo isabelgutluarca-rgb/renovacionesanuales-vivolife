@@ -571,9 +571,13 @@ function init(){
   });
   conTok.sort((a,b)=>getDias(a.v)-getDias(b.v));
 
-  // Tarjetas por actualizar: CON token + tarjeta vence <= TEXP_ALERTA días
-  texpList=conTok.filter(r=>(r.texpd!==undefined?r.texpd:9999)<=TEXP_ALERTA)
-    .sort((a,b)=>(a.texpd||9999)-(b.texpd||9999));
+  // Tarjetas por actualizar: overdue con token (cobro ya falló) + tarjeta vence <=45d
+  texpList=conTok.filter(r=>esMora(r)||(r.texpd!==undefined?r.texpd:9999)<=TEXP_ALERTA)
+    .sort((a,b)=>{
+      const am=esMora(a)?0:1, bm=esMora(b)?0:1;
+      if(am!==bm) return am-bm;
+      return (a.texpd||9999)-(b.texpd||9999);
+    });
 
   const total=sinTok.length+conTok.length;
   const pct=total?(conTok.length/total*100).toFixed(1):0;
@@ -915,7 +919,8 @@ function renderTok(){
 
   // Solo mostrar con tarjeta válida (texpd > 45 o sin fecha)
   tokFilt=conTok.filter(r=>{
-    if((r.texpd!==undefined?r.texpd:9999)<=TEXP_ALERTA) return false; // está en la pestaña texp
+    if((r.texpd!==undefined?r.texpd:9999)<=TEXP_ALERTA) return false; // está en pestaña tarjetas
+    if(esMora(r)) return false; // overdue → va a pestaña tarjetas, no aquí
     if(q){const matchTit=r.c.toLowerCase().includes(q)||(r.t||'').includes(q)||(r.vid||'').toLowerCase().includes(q);const matchDep=(r.deps||[]).some(d=>d.c.toLowerCase().includes(q)||(d.t||'').includes(q)||(d.vid||'').toLowerCase().includes(q));if(!matchTit&&!matchDep)return false;}
     if(fp&&r.p!==fp) return false;
     if(fm==='mora'&&!esMora(r)) return false;
