@@ -450,6 +450,7 @@ tbody tr.locked-row input,tbody tr.locked-row select,tbody tr.locked-row textare
           <th>Último pago</th>
           <th class="text-end">Monto Plan Q</th>
           <th class="text-end">Valor Total Q</th>
+          <th>Notas CAS</th>
         </tr></thead>
         <tbody id="tokBody"></tbody>
       </table>
@@ -939,7 +940,7 @@ function renderTok(){
   document.getElementById('tokPrev').disabled=tokPage<=1;
   document.getElementById('tokNext').disabled=tokPage>=pages;
 
-  if(!slice.length){document.getElementById('tokBody').innerHTML='<tr><td colspan="12" class="text-center py-5" style="color:#94a3b8">'+noResultMsg('tok',document.getElementById('tokQ').value)+'</td></tr>';return;}
+  if(!slice.length){document.getElementById('tokBody').innerHTML='<tr><td colspan="13" class="text-center py-5" style="color:#94a3b8">'+noResultMsg('tok',document.getElementById('tokQ').value)+'</td></tr>';return;}
 
   let html='';
   slice.forEach((r,i)=>{
@@ -962,8 +963,9 @@ function renderTok(){
       <td style="font-size:.75rem;color:${pagOk?'#15803d':'#dc2626'}">${r.u||'—'}</td>
       <td class="text-end" style="color:#475569">${fmtQ(r.m)}</td>
       <td class="text-end" style="color:#15803d;font-weight:700">${fmtQ(r.vtot||r.m)}</td>
+      <td><input type="text" class="ninp" value="${(getG('tok_'+r.id).n||'').replace(/"/g,'&quot;')}" placeholder="Notas CAS..." onchange="chgNotaTok('tok_'+${r.id},this.value)" style="min-width:160px"></td>
     </tr>`;
-    html+=buildDepsRow(r,12).replace('deps-','depst-').replace('deps-','depst-');
+    html+=buildDepsRow(r,13).replace('deps-','depst-').replace('deps-','depst-');
   });
   document.getElementById('tokBody').innerHTML=html;
 }
@@ -1088,6 +1090,7 @@ function chgEstTx(tid,sel,rid){
 }
 function chgFecha(id,campo,val){const g=getG(id);g[campo]=val;saveG(id,g);}
 function chgNota(id,val){const g=getG(id);g.n=val;saveG(id,g);}
+function chgNotaTok(id,val){const g=getG(id);g.n=val;saveG(id,g);}
 function chgAuth(id,val){const g=getG(id);g.auth=val;saveG(id,g);}
 function chgMreal(id,val){const g=getG(id);g.mreal=val;saveG(id,g);}
 function chgResp(id,val){const g=getG(id);g.resp=val;saveG(id,g);buildRespList();}
