@@ -181,6 +181,7 @@ tbody tr.locked-row input,tbody tr.locked-row select,tbody tr.locked-row textare
 .dep-badge:active{transform:scale(.97);}
 .vid-lbl{font-size:.63rem;color:#94a3b8;letter-spacing:.3px;margin-top:1px;}
 .tag-mora{background:#fecaca;color:#991b1b;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;}
+.resp-locked-lbl{display:inline-flex;align-items:center;font-size:.78rem;font-weight:700;color:#1a3c5e;background:#eff6ff;border:1px solid #bfdbfe;border-radius:5px;padding:3px 8px;}
 .tag-prox{background:#fef3c7;color:#92400e;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;}
 
 /* Urgencia tarjeta */
@@ -202,6 +203,7 @@ tbody tr.locked-row input,tbody tr.locked-row select,tbody tr.locked-row textare
   </div>
   <div class="clock" id="clock">—</div>
   <div class="d-flex gap-2 flex-wrap">
+    <button class="ebtn" onclick="verBitacora()" style="background:rgba(124,58,237,.25);border-color:rgba(167,139,250,.5)"><i class="fas fa-clipboard-list"></i> Bitácora</button>
     <button class="ebtn green" onclick="exportarCRM()"><i class="fas fa-download"></i> Exportar CRM</button>
     <button class="ebtn" onclick="exportarTok()"><i class="fas fa-download"></i> Exportar cobro auto</button>
     <button class="ebtn orange" onclick="exportarTexp()"><i class="fas fa-download"></i> Exportar tarjetas</button>
@@ -642,7 +644,52 @@ function diasTxt(r){
   return `<span style="color:#64748b">${d}d</span>`;
 }
 
-const getG=id=>gestion[id]||{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:''};
+const getG=id=>gestion[id]||{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',respLocked:false};
+
+// ── BITÁCORA ──────────────────────────────
+function logCambio(rowId,tab,campo,antes,despues,resp){
+  const log=JSON.parse(localStorage.getItem('rv9_log')||'[]');
+  log.unshift({ts:new Date().toISOString(),rowId:''+rowId,tab,campo,antes:''+antes,despues:''+despues,resp:resp||'—'});
+  if(log.length>800) log.splice(800);
+  localStorage.setItem('rv9_log',JSON.stringify(log));
+}
+function verBitacora(){
+  const log=JSON.parse(localStorage.getItem('rv9_log')||'[]');
+  const fmtTs=ts=>{const d=new Date(ts);return d.toLocaleDateString('es-GT')+' '+d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});};
+  const campoLabel={est:'Estado',f1:'1er intento',f2:'2do intento',n:'Notas',auth:'Autorización',mreal:'Monto real',resp:'Responsable',canal:'Canal','estado-guardado':'Guardado'};
+  let rows=log.slice(0,400).map((e,i)=>`<tr style="font-size:.75rem;border-bottom:1px solid #f1f5f9">
+    <td style="white-space:nowrap;color:#64748b;padding:4px 8px">${fmtTs(e.ts)}</td>
+    <td style="padding:4px 8px;font-weight:600;color:#1a3c5e">${e.resp}</td>
+    <td style="padding:4px 8px;color:#475569">${e.tab||'CRM'}</td>
+    <td style="padding:4px 8px">#${e.rowId}</td>
+    <td style="padding:4px 8px;color:#7c3aed">${campoLabel[e.campo]||e.campo}</td>
+    <td style="padding:4px 8px;color:#dc2626;max-width:120px;overflow:hidden;text-overflow:ellipsis">${e.antes}</td>
+    <td style="padding:4px 8px;color:#15803d;max-width:150px;overflow:hidden;text-overflow:ellipsis">${e.despues}</td>
+  </tr>`).join('');
+  if(!rows) rows='<tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">Sin registros aún</td></tr>';
+  let modal=document.getElementById('bitModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='bitModal';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding-top:40px;overflow:auto';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML=`<div style="background:#fff;border-radius:10px;width:95%;max-width:1100px;max-height:85vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="padding:16px 20px;background:#1a3c5e;color:#fff;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center">
+      <strong>📋 Bitácora de cambios (${log.length} registros)</strong>
+      <button onclick="document.getElementById('bitModal').style.display='none'" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:4px 12px;cursor:pointer;font-size:.85rem">✕ Cerrar</button>
+    </div>
+    <div style="padding:8px">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#f1f5f9;font-size:.7rem;font-weight:700;text-transform:uppercase;color:#64748b">
+          <th style="padding:6px 8px;text-align:left">Fecha/Hora</th><th style="padding:6px 8px;text-align:left">Responsable</th><th style="padding:6px 8px;text-align:left">Pestaña</th><th style="padding:6px 8px;text-align:left">Fila</th><th style="padding:6px 8px;text-align:left">Campo</th><th style="padding:6px 8px;text-align:left">Antes</th><th style="padding:6px 8px;text-align:left">Después</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+  modal.style.display='flex';
+}
 function saveG(id,o){gestion[id]=o;localStorage.setItem('rv9_g',JSON.stringify(gestion));}
 
 // ═══════════════════════════════════════
@@ -874,15 +921,14 @@ function renderCRM(){
     const vtot=r.vtot||r.m||0;
     const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
     const comVal=Math.round((parseFloat(mrealVal)||vtot)*getComPct(r.p)*100)/100;
-    const locked=!!g.locked;
     const moraTag=mora?`<span class="tag-mora">⚠ EN MORA</span>`:'';
-    const lockedCls=locked?' locked-row':'';
-    const dis=locked?'disabled':'' ;
-    const accionesCell=locked
-      ? `<div class="row-actions"><button class="act-btn unlock" onclick="adminDesbloquear(${r.id})">🔓 Admin</button></div>`
-      : `<div class="row-actions"><button class="act-btn save" onclick="guardarFila(${r.id})">💾 Guardar</button><button class="act-btn clr" onclick="limpiarFila(${r.id})">🗑 Limpiar</button></div>`;
+    const respLocked=!!(g.resp&&g.respLocked);
+    const respCell=respLocked
+      ?`<span class="resp-locked-lbl">${g.resp} <button class="act-btn" style="padding:1px 6px;font-size:.65rem;margin-left:4px" onclick="adminCambiarResp(${r.id})">🔒</button></span>`
+      :`<input type="text" class="rinp resp-inp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp(${r.id},this.value)">`;
+    const accionesCell=`<div class="row-actions"><button class="act-btn save" onclick="guardarFila(${r.id})">💾 Guardar</button><button class="act-btn clr" onclick="limpiarFila(${r.id})">🗑 Limpiar</button></div>`;
 
-    html+=`<tr class="${rowCls}${lockedCls}" id="r${r.id}">
+    html+=`<tr class="${rowCls}" id="r${r.id}">
       <td><input type="checkbox" class="crm-chk" value="${r.id}"></td>
       <td></td>
       <td style="color:#94a3b8;font-size:.71rem">${start+i+1}</td>
@@ -895,14 +941,14 @@ function renderCRM(){
       <td style="font-size:.75rem;color:#475569">${r.p}</td>
       <td style="white-space:nowrap;font-size:.77rem">${fmtDate(r.v)}</td>
       <td style="white-space:nowrap">${diasTxt(r)}</td>
-      <td><select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)" ${dis}>${selOpts}</select></td>
-      <td><input type="text" class="rinp" list="dl-resp" value="${(g.resp||'').replace(/"/g,'&quot;')}" placeholder="Responsable..." onchange="chgResp(${r.id},this.value)" ${dis}></td>
-      <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)" ${dis}>${canalSel}</select></td>
-      <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)" ${dis}></td>
-      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)" ${dis}></td>
-      <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)" ${dis}></td>
-      <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)" ${dis}></td>
-      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Tipifica el monto real con que se renovó" onchange="chgMreal(${r.id},this.value)" ${dis}></td>
+      <td><select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)">${selOpts}</select></td>
+      <td>${respCell}</td>
+      <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)">${canalSel}</select></td>
+      <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)"></td>
+      <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)"></td>
+      <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)"></td>
+      <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
+      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Monto real renovado" onchange="chgMreal(${r.id},this.value)"></td>
       <td class="text-end" style="color:#1a3c5e;font-weight:700;white-space:nowrap">${fmtQ(vtot)}</td>
       <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap" title="${getComPct(r.p)*100}% de ${fmtQ(parseFloat(mrealVal)||vtot)}">${fmtQ(comVal)}</td>
       <td style="text-align:center;vertical-align:middle">${accionesCell}</td>
@@ -1073,7 +1119,8 @@ function toggleDepsTx(id){
 // ACCIONES
 // ═══════════════════════════════════════
 function chgEst(id,sel){
-  const g=getG(id);g.est=sel.value;
+  const g=getG(id);const antes=g.est;g.est=sel.value;
+  logCambio(id,'CRM','est',antes,g.est,g.resp);
   if(g.est==='primer_intento'&&!g.f1){g.f1=new Date().toISOString().split('T')[0];const row=document.getElementById('r'+id);if(row)row.querySelectorAll('.finp')[0].value=g.f1;}
   if(g.est==='segundo_intento'&&!g.f2){g.f2=new Date().toISOString().split('T')[0];const row=document.getElementById('r'+id);if(row)row.querySelectorAll('.finp')[1].value=g.f2;}
   saveG(id,g);sel.className='est-dd '+g.est;
@@ -1090,12 +1137,29 @@ function chgEstTx(tid,sel,rid){
   const row=document.getElementById('tx'+rid);
   if(row)row.className=g.est==='renovado'?'done-row':'texp-row';
 }
-function chgFecha(id,campo,val){const g=getG(id);g[campo]=val;saveG(id,g);}
-function chgNota(id,val){const g=getG(id);g.n=val;saveG(id,g);}
-function chgNotaTok(id,val){const k='tok_'+id;const g=getG(k);g.n=val;saveG(k,g);}
-function chgAuth(id,val){const g=getG(id);g.auth=val;saveG(id,g);}
-function chgMreal(id,val){const g=getG(id);g.mreal=val;saveG(id,g);}
-function chgResp(id,val){const g=getG(id);g.resp=val;saveG(id,g);buildRespList();}
+function chgFecha(id,campo,val){const g=getG(id);const antes=g[campo]||'';g[campo]=val;saveG(id,g);logCambio(id,'CRM',campo,antes,val,g.resp);}
+function chgNota(id,val){const g=getG(id);const antes=g.n||'';g.n=val;saveG(id,g);logCambio(id,'CRM','n',antes,val,g.resp);}
+function chgNotaTok(id,val){const k='tok_'+id;const g=getG(k);const antes=g.n||'';g.n=val;saveG(k,g);logCambio(id,'Cobro','n',antes,val,'CAS');}
+function chgAuth(id,val){const g=getG(id);const antes=g.auth||'';g.auth=val;saveG(id,g);logCambio(id,'CRM','auth',antes,val,g.resp);}
+function chgMreal(id,val){const g=getG(id);const antes=g.mreal||'';g.mreal=val;saveG(id,g);logCambio(id,'CRM','mreal',antes,val,g.resp);}
+function chgResp(id,val){
+  const g=getG(id);const antes=g.resp||'';
+  g.resp=val; if(val) g.respLocked=true;
+  saveG(id,g); logCambio(id,'CRM','resp',antes,val,val||'—'); buildRespList();
+  const row=document.getElementById('r'+id);
+  if(row&&val){
+    const inp=row.querySelector('.resp-inp');
+    if(inp) inp.outerHTML=`<span class="resp-locked-lbl">${val} <button class="act-btn" style="padding:1px 6px;font-size:.65rem;margin-left:4px" onclick="adminCambiarResp(${id})">🔒</button></span>`;
+  }
+}
+function adminCambiarResp(id){
+  if(!adminOk('Contraseña para cambiar el responsable:'))return;
+  const g=getG(id);
+  const nuevo=prompt('Nuevo responsable (vacío para liberar):',g.resp||'');
+  if(nuevo===null)return;
+  const antes=g.resp; g.resp=nuevo.trim(); g.respLocked=!!g.resp;
+  saveG(id,g); logCambio(id,'CRM','resp',antes,g.resp,'ADMIN'); buildRespList(); renderCRM();
+}
 function chgCanal(id,sel){const g=getG(id);g.canal=sel.value;saveG(id,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();}
 function chgCanalG(tid,sel){const g=getG(tid);g.canal=sel.value;saveG(tid,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');}
 
@@ -1117,16 +1181,21 @@ function limpiarCRMAdmin(){
 
 // ── GUARDAR / LIMPIAR / DESBLOQUEAR FILA ──
 function guardarFila(id){
-  if(!confirm('¿Guardar y bloquear esta fila? Solo el administrador podrá editarla después.'))return;
-  const g=getG(id);g.locked=true;saveG(id,g);renderCRM();renderStats();
+  const g=getG(id);
+  logCambio(id,'CRM','estado-guardado',g.est,g.est,g.resp||'—');
+  // Flash visual en la fila
+  const row=document.getElementById('r'+id);
+  if(row){row.style.outline='2px solid #15803d';setTimeout(()=>row.style.outline='',1200);}
 }
 function limpiarFila(id){
   if(!confirm('¿Limpiar todos los datos de gestión de esta fila?'))return;
-  saveG(id,{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',locked:false});
+  const g=getG(id);
+  logCambio(id,'CRM','limpiar',g.est,'pendiente','ADMIN');
+  saveG(id,{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',respLocked:false});
   renderCRM();renderStats();
 }
 function adminDesbloquear(id){
-  if(!adminOk('Contraseña de administrador para desbloquear esta fila:'))return;
+  if(!adminOk('Contraseña de administrador:'))return;
   const g=getG(id);g.locked=false;saveG(id,g);renderCRM();
 }
 function limpiarTok(){['tokQ','tokPlan','tokMora'].forEach(x=>document.getElementById(x).value='');tokPage=1;renderTok();}
