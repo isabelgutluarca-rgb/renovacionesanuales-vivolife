@@ -1188,7 +1188,8 @@ function guardarFila(id){
   if(row){row.style.outline='2px solid #15803d';setTimeout(()=>row.style.outline='',1200);}
 }
 function limpiarFila(id){
-  if(!confirm('¿Limpiar todos los datos de gestión de esta fila?'))return;
+  if(!adminOk('Solo el administrador puede limpiar una fila. Ingresa la contraseña:'))return;
+  if(!confirm('¿Limpiar todos los datos de gestión de esta fila? Esta acción no se puede deshacer.'))return;
   const g=getG(id);
   logCambio(id,'CRM','limpiar',g.est,'pendiente','ADMIN');
   saveG(id,{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',respLocked:false});
