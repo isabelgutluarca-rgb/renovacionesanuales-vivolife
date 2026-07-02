@@ -99,6 +99,9 @@ for($i=2; $i -le $rows; $i++){
     # Estado basado en FECHA de vencimiento
     $s = if($diasExp -lt 0){ "mora" } elseif($diasExp -le 60){ "proximo" } else { "activo" }
 
+    # Solo mora y proximos a vencer (excluir activos normales)
+    if($s -eq "activo"){ continue }
+
     $vtot = $valPlan + ($valAdd * $dep)
     $com  = [math]::Round($valPlan * (GetCom $planId), 2)
     $upago = Cell $i 36
