@@ -1130,7 +1130,8 @@ function chgEst(id,sel){
   if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();
 }
 function chgEstTx(tid,sel,rid){
-  const g=getG(tid);g.est=sel.value;
+  const g=getG(tid);const antes=g.est;g.est=sel.value;
+  logCambio(rid,'Tarjetas','est',antes,g.est,g.resp);
   if(g.est==='primer_intento'&&!g.f1){g.f1=new Date().toISOString().split('T')[0];const row=document.getElementById('tx'+rid);if(row)row.querySelectorAll('.finp')[0].value=g.f1;}
   if(g.est==='segundo_intento'&&!g.f2){g.f2=new Date().toISOString().split('T')[0];const row=document.getElementById('tx'+rid);if(row)row.querySelectorAll('.finp')[1].value=g.f2;}
   saveG(tid,g);sel.className='est-dd '+g.est;
@@ -1162,6 +1163,38 @@ function adminCambiarResp(id){
 }
 function chgCanal(id,sel){const g=getG(id);g.canal=sel.value;saveG(id,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();}
 function chgCanalG(tid,sel){const g=getG(tid);g.canal=sel.value;saveG(tid,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');}
+function chgRespTx(rid,val){
+  const tid='tx_'+rid;const g=getG(tid);const antes=g.resp||'';
+  g.resp=val;if(val) g.respLocked=true;
+  saveG(tid,g);logCambio(rid,'Tarjetas','resp',antes,val,val||'—');buildRespList();
+  const row=document.getElementById('tx'+rid);
+  if(row&&val){
+    const inp=row.querySelector('.resp-inp');
+    if(inp) inp.outerHTML=`<span class="resp-locked-lbl">${val} <button class="act-btn" style="padding:1px 6px;font-size:.65rem;margin-left:4px" onclick="adminCambiarRespTx(${rid})">🔒</button></span>`;
+  }
+}
+function adminCambiarRespTx(rid){
+  if(!adminOk('Contraseña para cambiar el responsable:'))return;
+  const tid='tx_'+rid;const g=getG(tid);
+  const nuevo=prompt('Nuevo responsable (vacío para liberar):',g.resp||'');
+  if(nuevo===null)return;
+  const antes=g.resp;g.resp=nuevo.trim();g.respLocked=!!g.resp;
+  saveG(tid,g);logCambio(rid,'Tarjetas','resp',antes,g.resp,'ADMIN');buildRespList();renderTexp();
+}
+function guardarFilaTx(rid){
+  const g=getG('tx_'+rid);
+  logCambio(rid,'Tarjetas','estado-guardado',g.est,g.est,g.resp||'—');
+  const row=document.getElementById('tx'+rid);
+  if(row){row.style.outline='2px solid #15803d';setTimeout(()=>row.style.outline='',1200);}
+}
+function limpiarFilaTx(rid){
+  if(!adminOk('Solo el administrador puede limpiar una fila. Ingresa la contraseña:'))return;
+  if(!confirm('¿Limpiar todos los datos de esta fila?'))return;
+  const g=getG('tx_'+rid);
+  logCambio(rid,'Tarjetas','limpiar',g.est,'pendiente','ADMIN');
+  saveG('tx_'+rid,{est:'pendiente',f1:'',f2:'',n:'',auth:'',mreal:'',resp:'',canal:'',respLocked:false});
+  renderTexp();
+}
 
 // ═══════════════════════════════════════
 // PAGINACIÓN / FILTROS
