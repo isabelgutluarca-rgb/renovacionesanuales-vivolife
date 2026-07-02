@@ -708,19 +708,32 @@ function toggleDeps(id){
 }
 
 function buildDepsRow(r, colspan){
-  if(!r.deps||r.deps.length===0) return '';
-  const rows=r.deps.map(d=>`<tr>
-    <td><span style="background:#dbeafe;color:#1e40af;border-radius:10px;padding:1px 7px;font-size:.67rem;font-weight:700">Dependiente</span></td>
-    <td style="color:#0369a1;font-weight:700;font-size:.75rem">${d.vid||'—'}</td>
-    <td style="font-weight:600">${d.c||'—'}</td>
-    <td style="color:#1a3c5e">${d.t||'—'}</td>
-  </tr>`).join('');
+  const cnt = (r.deps&&r.deps.length>0) ? r.deps.length : (r.dep||0);
+  if(cnt===0) return '';
+  let rows;
+  if(r.deps&&r.deps.length>0){
+    rows=r.deps.map(d=>`<tr>
+      <td><span style="background:#dbeafe;color:#1e40af;border-radius:10px;padding:1px 7px;font-size:.67rem;font-weight:700">Adicional</span></td>
+      <td style="color:#0369a1;font-weight:700;font-size:.75rem">${d.vid||'—'}</td>
+      <td style="font-weight:600">${d.c||'—'}</td>
+      <td style="color:#1a3c5e">${d.t||'—'}</td>
+      <td style="color:#475569">${r.p||'—'}</td>
+    </tr>`).join('');
+  } else {
+    rows=Array.from({length:cnt},(_,k)=>`<tr>
+      <td><span style="background:#dbeafe;color:#1e40af;border-radius:10px;padding:1px 7px;font-size:.67rem;font-weight:700">Adicional ${k+1}</span></td>
+      <td style="color:#94a3b8;font-size:.72rem">—</td>
+      <td style="color:#64748b;font-size:.75rem">—</td>
+      <td style="color:#64748b;font-size:.75rem">—</td>
+      <td style="color:#475569">${r.p||'—'}</td>
+    </tr>`).join('');
+  }
   return `<tr class="dep-drawer d-none" id="deps-${r.id}">
     <td colspan="${colspan}">
       <div class="dep-inner">
-        <div style="font-size:.7rem;color:#0369a1;font-weight:700;margin-bottom:5px"><i class="fas fa-users me-1"></i>${r.deps.length} dependiente${r.deps.length>1?'s':''} asociado${r.deps.length>1?'s':''}</div>
+        <div style="font-size:.7rem;color:#0369a1;font-weight:700;margin-bottom:5px"><i class="fas fa-users me-1"></i>${cnt} adicional${cnt>1?'es':''} asociado${cnt>1?'s':''}</div>
         <table class="dep-table">
-          <thead><tr><th>Rol</th><th>Vivo ID</th><th>Nombre</th><th>Teléfono</th></tr></thead>
+          <thead><tr><th>Rol</th><th>Vivo ID</th><th>Nombre</th><th>Teléfono</th><th>Plan</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -914,9 +927,9 @@ function renderCRM(){
     const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
     const canalSel=cOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
     const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
-    const hasD=r.deps&&r.deps.length>0;
+    const hasD=(r.dep||0)>0;
     const expBtn='';
-    const depBadge=hasD?`<button class="dep-badge" id="dep-btn-${r.id}" onclick="toggleDeps(${r.id})"><i class="fas fa-users me-1"></i>+${r.deps.length} dep. <i class="fas fa-chevron-down" style="font-size:.55rem"></i></button>`:'';
+    const depBadge=hasD?`<button class="dep-badge" id="dep-btn-${r.id}" onclick="toggleDeps(${r.id})"><i class="fas fa-users me-1"></i>+${r.dep} dep. <i class="fas fa-chevron-down" style="font-size:.55rem"></i></button>`:'';
     const canalCls=(g.canal||'').replace(/\s/g,'');
     const vtot=r.vtot||r.m||0;
     const mrealVal=(g.mreal!==undefined&&g.mreal!=='')?g.mreal:vtot;
@@ -992,9 +1005,9 @@ function renderTok(){
     const d=getDias(r.v);
     const dTxt=esMora(r)?`<span class="urg-v">${Math.abs(d)}d vencida</span>`:d<=30?`<span style="color:#d97706">${d}d</span>`:`${d}d`;
     const pagOk=(r.u||'').toLowerCase().includes('approved');
-    const hasD=r.deps&&r.deps.length>0;
+    const hasD=(r.dep||0)>0;
     const expBtn=hasD?`<button class="exp-btn" id="expt-${r.id}" onclick="toggleDepsT(${r.id})"><i class="fas fa-chevron-right"></i></button>`:'';
-    const depBadge=hasD?`<span class="dep-badge" onclick="toggleDepsT(${r.id})">+${r.deps.length}</span>`:'';
+    const depBadge=hasD?`<span class="dep-badge" onclick="toggleDepsT(${r.id})">+${r.dep}</span>`:'';
     html+=`<tr>
       <td>${expBtn}</td>
       <td style="color:#94a3b8;font-size:.71rem">${start+i+1}</td>
@@ -1078,9 +1091,9 @@ function renderTexp(){
     const selOpts=opts.map(([v,l])=>`<option value="${v}"${g.est===v?' selected':''}>${l}</option>`).join('');
     const canalSel=cOpts.map(([v,l])=>`<option value="${v}"${(g.canal||'')===v?' selected':''}>${l}</option>`).join('');
     const showF2=g.est==='primer_intento'||g.est==='segundo_intento'||g.est==='renovado'||g.est==='no_renueva';
-    const hasD=r.deps&&r.deps.length>0;
+    const hasD=(r.dep||0)>0;
     const expBtn=hasD?`<button class="exp-btn" id="exptx-${r.id}" onclick="toggleDepsTx(${r.id})"><i class="fas fa-chevron-right"></i></button>`:'';
-    const depBadge=hasD?`<span class="dep-badge" onclick="toggleDepsTx(${r.id})">+${r.deps.length}</span>`:'';
+    const depBadge=hasD?`<span class="dep-badge" onclick="toggleDepsTx(${r.id})">+${r.dep}</span>`:'';
     const canalCls=(g.canal||'').replace(/\s/g,'');
 
     html+=`<tr class="${rowCls}" id="tx${r.id}">
