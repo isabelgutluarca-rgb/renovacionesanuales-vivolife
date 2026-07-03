@@ -553,6 +553,8 @@ let crmPage=1, tokPage=1, texpPage=1;
 const PER=50;
 let crmFilt=[], tokFilt=[], texpFilt=[];
 const TEXP_ALERTA=45;
+// Totales globales (incluye empresariales y todos los planes)
+const GLOBAL_TOTAL=4608, GLOBAL_TOK=2811, GLOBAL_SINTOK=1797;
 const hoy=new Date(); hoy.setHours(0,0,0,0);
 const CANALES=['CAS','Clinica','WhatsApp','Presencial','Digital','Otro'];
 
@@ -582,18 +584,18 @@ function init(){
     });
 
   const total=sinTok.length+conTok.length;
-  const pct=total?(conTok.length/total*100).toFixed(1):0;
+  const pct=(GLOBAL_TOK/GLOBAL_TOTAL*100).toFixed(1);
   const mora=[...sinTok,...conTok].filter(r=>esMora(r)).length;
   const prox=[...sinTok,...conTok].filter(r=>esProx(r)).length;
   const texpV=texpList.filter(r=>(r.texpd||9999)<0).length;
 
-  document.getElementById('k-total').textContent=total.toLocaleString('es-GT');
-  document.getElementById('k-total-sub').textContent=`${sinTok.length.toLocaleString('es-GT')} sin tarjeta · ${conTok.length.toLocaleString('es-GT')} con tarjeta`;
-  document.getElementById('k-tok').textContent=conTok.length.toLocaleString('es-GT');
+  document.getElementById('k-total').textContent=GLOBAL_TOTAL.toLocaleString('es-GT');
+  document.getElementById('k-total-sub').textContent=`${GLOBAL_SINTOK.toLocaleString('es-GT')} sin tarjeta · ${GLOBAL_TOK.toLocaleString('es-GT')} con tarjeta`;
+  document.getElementById('k-tok').textContent=GLOBAL_TOK.toLocaleString('es-GT');
   document.getElementById('k-pct').textContent=pct+'%';
   document.getElementById('k-bar').style.width=pct+'%';
-  document.getElementById('k-sin').textContent=sinTok.length.toLocaleString('es-GT');
-  document.getElementById('k-sin-sub').textContent=`${mora} en mora · ${prox} próximas`;
+  document.getElementById('k-sin').textContent=GLOBAL_SINTOK.toLocaleString('es-GT');
+  document.getElementById('k-sin-sub').textContent=`${mora} en mora (CRM) · ${prox} próximas`;
   document.getElementById('k-texp').textContent=texpList.length.toLocaleString('es-GT');
   document.getElementById('k-texp-sub').textContent=`${texpV} ya vencidas · ${texpList.length-texpV} ≤45d`;
   const conTokActivos=conTok.filter(r=>!esMora(r));
