@@ -1,12 +1,13 @@
 # ============================================================
 # gen_datos.ps1 — genera datos.js para el dashboard VivoLife
-# Fuente: suscripciones_anuales.xlsx (40 cols, sin dependientes individuales)
+# Fuente: suscripciones_anuales_1.xlsx (47 cols, con adicionales individuales)
 # Exclusion: deleted_at (col 12) no vacío, company_agreement_id (col 8) no vacío
-# Status filtro: active + overdue (excluye presale, reactivation, cancelados)
-# Una fila por suscripción; dep = total_adicionales (col 26)
+# Status filtro: active + overdue
+# Titular = rol=TITULAR o vivo_id=titular_personal_id
+# Dedup: pares únicos (id, vivo_id)
 # ============================================================
 
-$xlPath  = "C:\Users\Maria Gutierrez\Downloads\suscripciones_anuales.xlsx"
+$xlPath  = "C:\Users\Maria Gutierrez\Downloads\suscripciones_anuales_1.xlsx"
 $outPath = "C:\Users\Maria Gutierrez\renovaciones-vivolife\datos.js"
 $hoy     = [datetime]::Today
 
@@ -60,17 +61,16 @@ function GetPlan($id){
 
 function GetCom($id){ if($id -eq "16"){0.06} else {0.05} }
 
-# ── Serializar ───────────────────────────────────────────────
-$sinList = [System.Collections.Generic.List[string]]::new()
-$conList = [System.Collections.Generic.List[string]]::new()
-$cM=0; $cP=0; $cA=0; $cS=0; $cC=0; $cT=0; $cSkip=0
+# ── PASO 1: recolectar todas las filas válidas por suscripción ─
+$raw  = [System.Collections.Generic.Dictionary[string,hashtable]]::new()
+$seen = [System.Collections.Generic.HashSet[string]]::new()
 
 for($i=2; $i -le $rows; $i++){
     $id = Cell $i 1
     if(-not $id){ continue }
 
-    # Excluir cancelados (deleted_at no vacío)
-    if(Cell $i 12){ $cSkip++; continue }
+    # Excluir cancelados
+    if(Cell $i 12){ continue }
 
     # Filtro status: solo active / overdue
     $status = (Cell $i 6).ToLower()
@@ -79,32 +79,89 @@ for($i=2; $i -le $rows; $i++){
     # Excluir empresariales
     if(Cell $i 8){ continue }
 
-    $planId  = Cell $i 7
-    $vid     = Cell $i 19   # titular_personal_id = vivo_id titular
-    $nom     = "$(Cell $i 21) $(Cell $i 22)".Trim()
-    $tel     = Cell $i 23
-    $email   = Cell $i 24
-    $dep     = [int]("$(Cell $i 26)" -replace '[^0-9]','')   # total_adicionales
-    $valPlan = 0.0; [double]::TryParse((Cell $i 27),[ref]$valPlan) | Out-Null
-    $valAdd  = 0.0; [double]::TryParse((Cell $i 28),[ref]$valAdd)  | Out-Null
-    $tok     = if((Cell $i 29) -eq "1"){ 1 } else { 0 }
+    $titVid = Cell $i 19
+    $memVid = Cell $i 41   # usuarios activos.vivo_id
+    $rol    = (Cell $i 45).ToUpper()
 
-    $vDate    = ParseDate (Cell $i 17)   # expiration_date
-    $texpDate = ParseDate (Cell $i 31)   # expiracion_tarjeta_default
+    # Deduplicar por (id, vivo_id)
+    $dkey = "${id}_${memVid}"
+    if(-not $seen.Add($dkey)){ continue }
+
+    $esTit = ($memVid -ne "" -and $memVid -eq $titVid) -or ($rol -eq "TITULAR")
+
+    if(-not $raw.ContainsKey($id)){
+        $raw[$id] = @{ titular=$null; deps=[System.Collections.Generic.List[hashtable]]::new() }
+    }
+
+    if($esTit){
+        if($raw[$id].titular -eq $null){
+            $raw[$id].titular = @{
+                id=$id; status=$status
+                titVid=$titVid
+                planId=(Cell $i 7)
+                vid=(Cell $i 19)
+                nom="$(Cell $i 21) $(Cell $i 22)".Trim()
+                tel=(Cell $i 23); email=(Cell $i 24)
+                totalAdic=(Cell $i 26)
+                expDate=(Cell $i 17)
+                valPlan=(Cell $i 27); valAdd=(Cell $i 28)
+                token=(Cell $i 29)
+                texpRaw=(Cell $i 31)
+                upago=(Cell $i 36)
+                monto=(Cell $i 47)
+            }
+        }
+    } else {
+        if($memVid -and $memVid -ne $titVid){
+            $raw[$id].deps.Add(@{
+                vid=$memVid
+                c="$(Cell $i 42) $(Cell $i 43)".Trim()
+                t=(Cell $i 44)
+            })
+        }
+    }
+}
+
+Write-Host "Suscripciones raw: $($raw.Count)"
+
+# ── PASO 2: serializar ───────────────────────────────────────
+$sinList = [System.Collections.Generic.List[string]]::new()
+$conList = [System.Collections.Generic.List[string]]::new()
+$cM=0; $cP=0; $cA=0; $cS=0; $cC=0; $cT=0; $cSkip=0
+
+foreach($kv in $raw.GetEnumerator()){
+    $r = $kv.Value.titular
+    if(-not $r){ $cSkip++; continue }
+
+    $vDate    = ParseDate $r.expDate
+    $texpDate = ParseDate $r.texpRaw
     $diasExp  = if($vDate){ [math]::Ceiling(($vDate-$hoy).TotalDays) } else { 9999 }
     $texpd    = if($texpDate){ [math]::Ceiling(($texpDate-$hoy).TotalDays) } else { 9999 }
     $vStr     = if($vDate){ $vDate.ToString("dd/MM/yyyy") } else { "" }
     $texpStr  = if($texpDate){ $texpDate.ToString("dd/MM/yyyy") } else { "" }
 
-    # Estado basado en FECHA de vencimiento
     $s = if($diasExp -lt 0){ "mora" } elseif($diasExp -le 60){ "proximo" } else { "activo" }
 
-    $vtot = $valPlan + ($valAdd * $dep)
-    $com  = [math]::Round($valPlan * (GetCom $planId), 2)
-    $upago = Cell $i 36
+    $planId  = $r.planId
+    $valPlan = 0.0; [double]::TryParse($r.valPlan,[ref]$valPlan) | Out-Null
+    $valAdd  = 0.0; [double]::TryParse($r.valAdd,[ref]$valAdd)  | Out-Null
+    $dep     = $kv.Value.deps.Count
+    $tok     = if($r.token -eq "1"){ 1 } else { 0 }
 
-    # Sin dependientes individuales en este archivo
-    $rec = "{id:$id,vid:`"$(EscJs $vid)`",c:`"$(EscJs $nom)`",t:`"$(EscJs $tel)`",e:`"$(EscJs $email)`",p:`"$(EscJs (GetPlan $planId))`",v:`"$vStr`",s:`"$s`",diasExp:$diasExp,m:$valPlan,vadd:$valAdd,dep:$dep,vtot:$vtot,com:$com,u:`"$(EscJs $upago)`",texp:`"$texpStr`",texpd:$texpd,deps:[]}"
+    $montRaw = $r.monto
+    $vtot    = if($montRaw -and [double]$montRaw -gt 0){ [double]$montRaw } else { $valPlan + ($valAdd * $dep) }
+    $com     = [math]::Round($valPlan * (GetCom $planId), 2)
+
+    # Dependientes JSON
+    $dj = "["; $f = $true
+    foreach($d in $kv.Value.deps){
+        if(-not $f){ $dj += "," }
+        $dj += "{vid:`"$(EscJs $d.vid)`",c:`"$(EscJs $d.c)`",t:`"$(EscJs $d.t)`"}"
+        $f = $false
+    }
+    $dj += "]"
+
+    $rec = "{id:$($r.id),vid:`"$(EscJs $r.vid)`",c:`"$(EscJs $r.nom)`",t:`"$(EscJs $r.tel)`",e:`"$(EscJs $r.email)`",p:`"$(EscJs (GetPlan $planId))`",v:`"$vStr`",s:`"$s`",diasExp:$diasExp,m:$valPlan,vadd:$valAdd,dep:$dep,vtot:$vtot,com:$com,u:`"$(EscJs $r.upago)`",texp:`"$texpStr`",texpd:$texpd,deps:$dj}"
 
     if($s -eq "mora"){ $cM++ } elseif($s -eq "proximo"){ $cP++ } else { $cA++ }
 
@@ -118,9 +175,8 @@ for($i=2; $i -le $rows; $i++){
     }
 }
 
-Write-Host "Cancelados omitidos: $cSkip"
+Write-Host "Sin titular (omitidos): $cSkip"
 
-# Ordenar SIN TOKEN: mora primero, luego proximo, activo
 $sinSorted = $sinList | Sort-Object {
     $l = $_
     $sm = if($l -match 's:"mora"'){ 0 } elseif($l -match 's:"proximo"'){ 1 } else { 2 }
