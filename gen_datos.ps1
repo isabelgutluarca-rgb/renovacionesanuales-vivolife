@@ -129,8 +129,8 @@ foreach($kv in $raw.GetEnumerator()){
     $vStr     = if($vDate){ $vDate.ToString("dd/MM/yyyy") } else { "" }
     $texpStr  = if($texpDate){ $texpDate.ToString("dd/MM/yyyy") } else { "" }
 
-    # Estado: overdue del Excel = mora siempre; active = calcular por fecha
-    $s = if($r.status -eq "overdue"){ "mora" } elseif($diasExp -le 60){ "proximo" } else { "activo" }
+    # Estado basado en fecha de vencimiento (más preciso que el status del Excel)
+    $s = if($diasExp -lt 0){ "mora" } elseif($diasExp -le 60){ "proximo" } else { "activo" }
 
     $planNom = if($r.planNom){ $r.planNom } else { "Vivolife" }
     $valPlan = 0.0; [double]::TryParse($r.valPlan,[ref]$valPlan) | Out-Null
