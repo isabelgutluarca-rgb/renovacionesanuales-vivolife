@@ -1041,14 +1041,14 @@ function renderCRM(){
       <td style="font-size:.75rem;color:#475569">${r.p}</td>
       <td style="white-space:nowrap;font-size:.77rem">${fmtDate(r.v)}</td>
       <td style="white-space:nowrap">${diasTxt(r)}</td>
-      <td><select class="est-dd ${g.est}" onchange="chgEst(${r.id},this)">${selOpts}</select></td>
+      <td style="min-width:160px"><select class="est-dd ${g.est}" onchange="pendingEst(${r.id},this)">${selOpts}</select><button class="act-btn save d-none" id="conf-est-${r.id}" onclick="confirmarEst(${r.id})" style="margin-top:4px;width:100%;font-size:.7rem">✓ Confirmar estado</button></td>
       <td>${respCell}</td>
-      <td><select class="canal-dd ${canalCls}" onchange="chgCanal(${r.id},this)">${canalSel}</select></td>
+      <td style="min-width:140px"><select class="canal-dd ${canalCls}" onchange="pendingCanal(${r.id},this)">${canalSel}</select><button class="act-btn save d-none" id="conf-canal-${r.id}" onclick="confirmarCanal(${r.id})" style="margin-top:4px;width:100%;font-size:.7rem">✓ Guardar canal</button></td>
       <td><input type="date" class="finp" value="${g.f1||''}" onchange="chgFecha(${r.id},'f1',this.value)"></td>
       <td><input type="date" class="finp" value="${g.f2||''}" onchange="chgFecha(${r.id},'f2',this.value)"></td>
       <td><input type="text" class="ainp" value="${(g.auth||'').replace(/"/g,'&quot;')}" placeholder="No. Autorización..." onchange="chgAuth(${r.id},this.value)"></td>
       <td><input type="text" class="ninp" value="${(g.n||'').replace(/"/g,'&quot;')}" placeholder="Notas..." onchange="chgNota(${r.id},this.value)"></td>
-      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Monto real renovado" onchange="chgMreal(${r.id},this.value)"></td>
+      <td class="text-end"><input type="number" class="minp" value="${mrealVal}" step="0.01" min="0" title="Monto real renovado" oninput="chgMreal(${r.id},this.value)"></td>
       <td class="text-end" style="color:#1a3c5e;font-weight:700;white-space:nowrap">${fmtQ(vtot)}</td>
       <td class="text-end" style="color:#15803d;font-weight:700;white-space:nowrap" title="${getComPct(r.p)*100}% de ${fmtQ(parseFloat(mrealVal)||vtot)}">${fmtQ(comVal)}</td>
       <td style="text-align:center;vertical-align:middle">${accionesCell}</td>
@@ -1218,9 +1218,38 @@ function toggleDepsTx(id){
 // ═══════════════════════════════════════
 // ACCIONES
 // ═══════════════════════════════════════
+function pendingEst(id,sel){
+  sel.dataset.pending=sel.value;
+  const btn=document.getElementById('conf-est-'+id);
+  if(btn) btn.classList.remove('d-none');
+}
+function confirmarEst(id){
+  const sel=document.querySelector('#r'+id+' .est-dd');
+  if(!sel) return;
+  const val=sel.dataset.pending||sel.value;
+  chgEst(id,{value:val});
+  const btn=document.getElementById('conf-est-'+id);
+  if(btn) btn.classList.add('d-none');
+}
+function pendingCanal(id,sel){
+  sel.dataset.pending=sel.value;
+  sel.className='canal-dd '+(sel.value||'').replace(/\s/g,'');
+  const btn=document.getElementById('conf-canal-'+id);
+  if(btn) btn.classList.remove('d-none');
+}
+function confirmarCanal(id){
+  const sel=document.querySelector('#r'+id+' .canal-dd');
+  if(!sel) return;
+  const val=sel.dataset.pending||sel.value;
+  const g=getG(id);const antes=g.canal||'';
+  g.canal=val;saveG(id,g);logCambio(id,'CRM','canal',antes,val,g.resp||'—');
+  const btn=document.getElementById('conf-canal-'+id);
+  if(btn) btn.classList.add('d-none');
+  if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();
+}
 function chgEst(id,sel){
   const g=getG(id);const antes=g.est;g.est=sel.value;
-  logCambio(id,'CRM','est',antes,g.est,g.resp);
+  logCambio(id,'CRM','estado',antes,g.est,g.resp||'—');
   if(g.est==='primer_intento'&&!g.f1){g.f1=new Date().toISOString().split('T')[0];const row=document.getElementById('r'+id);if(row)row.querySelectorAll('.finp')[0].value=g.f1;}
   if(g.est==='segundo_intento'&&!g.f2){g.f2=new Date().toISOString().split('T')[0];const row=document.getElementById('r'+id);if(row)row.querySelectorAll('.finp')[1].value=g.f2;}
   saveG(id,g);sel.className='est-dd '+g.est;
