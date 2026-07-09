@@ -1290,8 +1290,8 @@ function adminCambiarResp(id){
   const antes=g.resp; g.resp=nuevo.trim(); g.respLocked=!!g.resp;
   saveG(id,g); logCambio(id,'CRM','resp',antes,g.resp,'ADMIN'); buildRespList(); renderCRM();
 }
-function chgCanal(id,sel){const g=getG(id);g.canal=sel.value;saveG(id,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();}
-function chgCanalG(tid,sel){const g=getG(tid);g.canal=sel.value;saveG(tid,g);sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');}
+function chgCanal(id,sel){const g=getG(id);const antes=g.canal||'';g.canal=sel.value;saveG(id,g);logCambio(id,'CRM','canal',antes,g.canal,g.resp||'—');sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');if(!document.getElementById('canalBody').classList.contains('d-none'))renderCanalMetricas();}
+function chgCanalG(tid,sel){const g=getG(tid);const antes=g.canal||'';g.canal=sel.value;saveG(tid,g);logCambio(tid,'Tarjetas','canal',antes,g.canal,g.resp||'—');sel.className='canal-dd '+(g.canal||'').replace(/\s/g,'');}
 function chgRespTx(rid,val){
   const tid='tx_'+rid;const g=getG(tid);const antes=g.resp||'';
   g.resp=val;if(val) g.respLocked=true;
